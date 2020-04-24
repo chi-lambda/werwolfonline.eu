@@ -1,32 +1,39 @@
+using System;
+
 namespace werwolfonline.Database.Model
 {
     public class Player
     {
-        public int id { get; set; }
-        public string name { get; set; }
-        public int spielleiter { get; set; }
-        public int lebt { get; set; }
-        public int wahlAuf { get; set; }
-        public int angeklagtVon { get; set; }
-        public int nachtIdentitaet { get; set; }
-        public int buergermeister { get; set; }
-        public int hexeHeiltraenke { get; set; }
-        public int hexeTodestraenke { get; set; }
-        public int hexenOpfer { get; set; }
-        public int hexeHeilt { get; set; }
-        public int beschuetzerLetzteRundeBeschuetzt { get; set; }
-        public int parErmEingesetzt { get; set; }
-        public int verliebtMit { get; set; }
-        public int jaegerDarfSchiessen { get; set; }
-        public int buergermeisterDarfWeitergeben { get; set; }
-        public int urwolf_anzahl_faehigkeiten { get; set; }
-        public int dieseNachtGestorben { get; set; }
-        public int countdownBis { get; set; }
-        public int countdownAb { get; set; }
-        public string playerlog { get; set; }
-        public string popup_text { get; set; }
-        public int bereit { get; set; }
-        public int reload { get; set; }
-        public int verifizierungsnr { get; set; }
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public bool IsHost { get; set; }
+        public bool IsAlive { get; set; }
+        public int VoteForId { get; set; }
+        public Player VoteFor{get;set;}
+        public int AccuserId { get; set; }
+        public Player Accuser{get;set;}
+        public int Character { get; set; }
+        public bool IsMayer { get; set; }
+        public int HealingPotions { get; set; }
+        public int DeathPotions { get; set; }
+        public int WitchVictimId { get; set; }
+        public Player WitchVictim{get;set;}
+        public bool WitchHeals { get; set; }
+        public int ProtectorLastProtegeeId { get; set; }
+        public Player ProtectorLastProtegee{get;set;}
+        public bool ParanormalUsed { get; set; }
+        public int? InLoveWithPlayerId { get; set; }
+        public Player InLoverWithPlayer{get;set;}
+        public bool HunterCanShoot { get; set; }
+        public int MayerPassesOn { get; set; }
+        public bool GreatWolfUsed { get; set; }
+        public bool DiedTonight { get; set; }
+        public int CountdownTo { get; set; }
+        public int CountdownFrom { get; set; }
+        public string Log { get; set; }
+        public string PopupText { get; set; }
+        public bool Ready { get; set; }
+        public bool Reload { get; set; }
+        public Guid VerificationNumber { get; set; }
     }
 }
