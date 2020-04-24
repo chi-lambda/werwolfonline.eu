@@ -9,21 +9,21 @@ namespace werwolfonline.Database.Model
         public bool IsHost { get; set; }
         public bool IsAlive { get; set; }
         public int VoteForId { get; set; }
-        public Player VoteFor{get;set;}
+        public Player VoteFor { get; set; }
         public int AccuserId { get; set; }
-        public Player Accuser{get;set;}
+        public Player Accuser { get; set; }
         public int Character { get; set; }
         public bool IsMayer { get; set; }
         public int HealingPotions { get; set; }
         public int DeathPotions { get; set; }
         public int WitchVictimId { get; set; }
-        public Player WitchVictim{get;set;}
+        public Player WitchVictim { get; set; }
         public bool WitchHeals { get; set; }
         public int ProtectorLastProtegeeId { get; set; }
-        public Player ProtectorLastProtegee{get;set;}
+        public Player ProtectorLastProtegee { get; set; }
         public bool ParanormalUsed { get; set; }
         public int? InLoveWithPlayerId { get; set; }
-        public Player InLoverWithPlayer{get;set;}
+        public Player InLoverWithPlayer { get; set; }
         public bool HunterCanShoot { get; set; }
         public int MayerPassesOn { get; set; }
         public bool GreatWolfUsed { get; set; }
@@ -35,5 +35,7 @@ namespace werwolfonline.Database.Model
         public bool Ready { get; set; }
         public bool Reload { get; set; }
         public Guid VerificationNumber { get; set; }
+        public int GameId { get; set; }
+        public Game Game { get; set; }
     }
 }
