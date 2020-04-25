@@ -7,8 +7,8 @@ namespace werwolfonline.Database
 {
     public class WerewolfContext : DbContext
     {
-        public DbSet<Player> Players { get; }
-        public DbSet<Game> Games { get; }
+        public DbSet<Player> Players { get; } = null!;
+        public DbSet<Game> Games { get; } = null!;
 
         protected override void OnModelCreating(ModelBuilder modelBuilder){
             modelBuilder.Entity<Game>()
