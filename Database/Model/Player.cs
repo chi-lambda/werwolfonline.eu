@@ -12,27 +12,24 @@ namespace werwolfonline.Database.Model
         public string Name { get; set; } = "";
         public bool IsHost { get; set; }
         public bool IsAlive { get; set; }
-        public bool IsWerewolfVictim { get; set; }
         public bool IsReady { get; set; }
         public int? VoteForId { get; set; }
-        public Player? VoteFor { get; set; }
+        public virtual Player? VoteFor { get; set; }
         public Character Character { get; set; }
         public bool IsMayor { get; set; }
         public int HealingPotions { get; set; } = 1;
         public int DeathPotions { get; set; } = 1;
-        public int? ProtectorLastProtegeeId { get; set; }
-        public Player? ProtectorLastProtegee { get; set; }
         public bool ParanormalUsed { get; set; }
         public int? LoverId { get; set; }
-        public Player? Lover { get; set; }
-        public int? AssociateId{ get; set; }
+        public virtual Player? Lover { get; set; }
+        public int? AssociateId { get; set; }
 
         /// <summary>Protected by Protector or sleeping with Slut.</summary>
-        public Player? Associate { get; set; }
+        public virtual Player? Associate { get; set; }
         public int? LastAssociateId { get; set; }
 
         /// <summary>Associate from previous night.</summary>
-        public Player? LastAssociate { get; set; }
+        public virtual Player? LastAssociate { get; set; }
         public bool HunterCanShoot { get; set; }
         public int MayorPassesOn { get; set; }
         public bool GreatWolfUsed { get; set; }
@@ -45,9 +42,7 @@ namespace werwolfonline.Database.Model
         public bool Reload { get; set; }
         public string Secret { get; set; } = "";
         public int GameId { get; set; }
-        public Game Game { get; set; } = null!;
-
-        public List<Player> Accusers { get; set; } = new List<Player>();
+        public virtual Game Game { get; set; } = null!;
         public List<Player> Voters { get; set; } = new List<Player>();
 
         [NotMapped]

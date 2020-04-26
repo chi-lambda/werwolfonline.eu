@@ -66,17 +66,17 @@ namespace werwolfonline.SignalR.Hubs
             var killedPlayer = await playerRepository.GetById(killedPlayerId);
             if (killedPlayer != null && killedPlayer.GameId == player.GameId)
             {
-                await Kill(killedPlayer);
+                player.DiedTonight = true;
             }
         }
         public async Task WitchHeal(int playerId, string secret)
         {
             var player = await playerRepository.GetById(playerId);
             if (player == null || player.Secret != secret || player.Character != Character.Witch) { return; }
-            var werewolfVictim = await playerRepository.GetWerewolfVictim(player.GameId);
+            var werewolfVictim = await playerRepository.GetWerewolfVictim(player.Game);
             if (werewolfVictim != null)
             {
-                player.IsAlive = true;
+                player.DiedTonight = false;
             }
         }
         public async Task SeerIdentify(int playerId, string secret, int identifiedPlayerId)
@@ -88,9 +88,8 @@ namespace werwolfonline.SignalR.Hubs
             if (identifiedPlayer == null || !identifiedPlayer.IsAlive || identifiedPlayer.GameId != player.GameId) { return; }
 
             var character = Models.Characters.Character.GetCharacterById(identifiedPlayer.Character);
-            var game = await gameRepository.GetById(player.GameId);
 
-            if (game.SeerSeesIdentity)
+            if (player.Game.SeerSeesIdentity)
             {
                 await Clients.Caller.RevealIdentity(character.Name);
             }
@@ -138,8 +137,7 @@ namespace werwolfonline.SignalR.Hubs
             {
                 if (otherPlayer.IsWerewolf)
                 {
-                    player.IsAlive = false;
-                    await Kill(player);
+                    player.DiedTonight = true;
                 }
                 else
                 {
@@ -176,6 +174,11 @@ namespace werwolfonline.SignalR.Hubs
         {
             var game = await gameRepository.GetById(gameId);
             if (game == null) { return; }
+
+            switch(game.Phase){
+                case Phase.NightWolves:
+                    break;
+            }
         }
 
     }

@@ -11,12 +11,12 @@ namespace werwolfonline.Database.Model
         public bool RevealCharacters { get; set; }
         public bool PassOnMayor { get; set; }
         public bool SeerSeesIdentity { get; set; }
-        public List<CharacterCount> CharacterCounts { get; set; } = new List<CharacterCount>();
+        public virtual List<CharacterCount> CharacterCounts { get; set; } = new List<CharacterCount>();
         public bool RandomSelection { get; set; }
         public int RandomSelectionBonus { get; set; }
         public bool UnanimousWerewolves { get; set; }
         public int? WerewolfVictimId { get; set; }
-        public Player? WerewolfVictim { get; set; }
+        public virtual Player? WerewolfVictim { get; set; }
         public int WerewolfTimer1 { get; set; }
         public int WerwolfTimer1BonusPerPlayer { get; set; }
         public int WerewolfTimer2 { get; set; }
@@ -29,6 +29,6 @@ namespace werwolfonline.Database.Model
         public int Night { get; set; }
         public string Log { get; set; } = "";
         public DateTime LastAccess { get; set; }
-        public List<Player> Players { get; set; } = new List<Player>();
+        public virtual List<Player> Players { get; set; } = new List<Player>();
     }
 }

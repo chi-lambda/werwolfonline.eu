@@ -21,8 +21,9 @@ namespace werwolfonline.Database.Repositories
             return await context.Players.FindAsync(id);
         }
 
-        public async Task<Player> GetWerewolfVictim(int gameId){
-            return await context.Players.SingleOrDefaultAsync(player => player.GameId == gameId && player.IsWerewolfVictim);
+        public async Task<Player> GetWerewolfVictim(Game game)
+        {
+            return await context.Players.FindAsync(game.WerewolfVictimId);
         }
 
         public async Task<IEnumerable<Player>> GetWerewolves(int gameId)
@@ -62,8 +63,24 @@ namespace werwolfonline.Database.Repositories
                 .SingleOrDefaultAsync(player => player.GameId == gameId && player.Character == Character.Protector);
         }
 
-        public async Task<bool> IsProtected(int playerId){
+        public async Task<bool> IsPlayerProtected(int playerId)
+        {
             return await context.Players.AnyAsync(player => player.Character == Character.Protector && player.AssociateId == playerId);
+        }
+
+        public async Task<int> GetWerewolfCount()
+        {
+            return await context.Players.CountAsync(player => player.Character == Character.GreatWolf || player.Character == Character.Werewolf);
+        }
+
+        public async Task<IEnumerable<Player>> GetAll()
+        {
+            return await context.Players.ToListAsync();
+        }
+
+        public async Task<int> Count()
+        {
+            return await context.Players.CountAsync();
         }
 
         public async Task Add(Player player)
