@@ -46,13 +46,13 @@ namespace werwolfonline.Database.Model
         public List<Player> Voters { get; set; } = new List<Player>();
 
         [NotMapped]
-        public string? Connectionid { get; set; }
+        public string? ConnectionId { get; set; }
 
         public Player() { }
         public Player(string name, string connectionId, Game game)
         {
             Name = name;
-            Connectionid = connectionId;
+            ConnectionId = connectionId;
             Game = game;
             var rng = new RNGCryptoServiceProvider();
             byte[] bytes = new byte[129];

@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Newtonsoft.Json;
@@ -27,7 +29,7 @@ namespace werwolfonline.SignalR.Hubs
             {
                 if (player.Secret == secret)
                 {
-                    player.Connectionid = Context.ConnectionId;
+                    player.ConnectionId = Context.ConnectionId;
                     await Clients.Caller.SendPlayerUpdate(JsonConvert.SerializeObject(player));
                 }
                 else
@@ -128,8 +130,8 @@ namespace werwolfonline.SignalR.Hubs
             {
                 lover1.Lover = lover2;
                 lover2.Lover = lover1;
-                await Clients.Client(lover1.Connectionid).InformLover(lover2.Id);
-                await Clients.Client(lover2.Connectionid).InformLover(lover1.Id);
+                await Clients.Client(lover1.ConnectionId).InformLover(lover2.Id);
+                await Clients.Client(lover2.ConnectionId).InformLover(lover1.Id);
             }
         }
 
@@ -143,11 +145,11 @@ namespace werwolfonline.SignalR.Hubs
             {
                 if (otherPlayer.IsWerewolf)
                 {
-                    player.DiedTonight = true;
+                    await playerRepository.SetDiedTonight(player, true);
                 }
                 else
                 {
-
+                    await playerRepository.SetAssociate(player, otherPlayer);
                 }
             }
         }
@@ -184,8 +186,32 @@ namespace werwolfonline.SignalR.Hubs
             switch (game.Phase)
             {
                 case Phase.NightWolves:
+                    var wolves = await playerRepository.GetWerewolves(gameId);
+                    var victim = await MarjorityWinner(wolves, gameId);
+                    if (victim != null)
+                    {
+                        await Clients.Clients(wolves.Select(wolf => wolf.ConnectionId).ToList()).GoToSleep();
+                        await playerRepository.SetDiedTonight(victim, true);
+                    }
                     break;
             }
+        }
+
+        private async Task<Player?> MarjorityWinner(IEnumerable<Player> voters, int gameId)
+        {
+            var voterCount = voters.Count(voter => voter.VoteForId != null);
+            // Find the one who has a plurality
+            var pluralityWinner = voters
+                                    .Where(voter => voter.VoteForId != null)
+                                    .Select(voter => voter.VoteForId ?? 0)
+                                    .GroupBy(playerId => playerId)
+                                    .OrderByDescending(grouping => grouping.Count())
+                                    .First();
+            if (pluralityWinner.Count() > voterCount / 2)
+            {
+                return await playerRepository.GetById(pluralityWinner.Key);
+            }
+            return null;
         }
 
     }

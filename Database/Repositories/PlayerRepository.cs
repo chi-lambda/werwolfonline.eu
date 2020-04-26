@@ -83,6 +83,27 @@ namespace werwolfonline.Database.Repositories
             return await context.Players.CountAsync();
         }
 
+        public async Task<int> CountForGame(int gameId)
+        {
+            return await context.Players.CountAsync(player => player.GameId == gameId && player.IsAlive);
+        }
+        public async Task<int> CountWolvesForGame(int gameId)
+        {
+            return await context.Players.CountAsync(player => player.GameId == gameId && player.IsAlive && (player.Character == Character.Werewolf || player.Character == Character.GreatWolf));
+        }
+
+        public async Task SetAssociate(Player player, Player associate)
+        {
+            player.Associate = associate;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task SetDiedTonight(Player player, bool state)
+        {
+            player.DiedTonight = state;
+            await context.SaveChangesAsync();
+        }
+
         public async Task Add(Player player)
         {
             context.Add(player);

@@ -17,5 +17,6 @@ namespace werwolfonline.SignalR.Clients
         Task AskSeer();
         Task AskWitch();
         Task AskWerewolf();
+        Task GoToSleep();
     }
 }
