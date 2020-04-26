@@ -62,6 +62,10 @@ namespace werwolfonline.Database.Repositories
                 .SingleOrDefaultAsync(player => player.GameId == gameId && player.Character == Character.Protector);
         }
 
+        public async Task<bool> IsProtected(int playerId){
+            return await context.Players.AnyAsync(player => player.Character == Character.Protector && player.AssociateId == playerId);
+        }
+
         public async Task Add(Player player)
         {
             context.Add(player);

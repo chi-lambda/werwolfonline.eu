@@ -25,6 +25,14 @@ namespace werwolfonline.Database.Model
         public bool ParanormalUsed { get; set; }
         public int? LoverId { get; set; }
         public Player? Lover { get; set; }
+        public int? AssociateId{ get; set; }
+
+        /// <summary>Protected by Protector or sleeping with Slut.</summary>
+        public Player? Associate { get; set; }
+        public int? LastAssociateId { get; set; }
+
+        /// <summary>Associate from previous night.</summary>
+        public Player? LastAssociate { get; set; }
         public bool HunterCanShoot { get; set; }
         public int MayorPassesOn { get; set; }
         public bool GreatWolfUsed { get; set; }
