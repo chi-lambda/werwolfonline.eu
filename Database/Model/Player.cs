@@ -49,10 +49,11 @@ namespace werwolfonline.Database.Model
         public string? Connectionid { get; set; }
 
         public Player() { }
-        public Player(string name, string connectionId)
+        public Player(string name, string connectionId, Game game)
         {
             Name = name;
             Connectionid = connectionId;
+            Game = game;
             var rng = new RNGCryptoServiceProvider();
             byte[] bytes = new byte[129];
             rng.GetBytes(bytes);

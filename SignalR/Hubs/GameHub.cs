@@ -41,9 +41,15 @@ namespace werwolfonline.SignalR.Hubs
             }
         }
 
-        public async Task NewPlayer(string name)
+        public async Task NewPlayer(string name, int gameId)
         {
-            var player = new Player(name, Context.ConnectionId);
+            var game = await gameRepository.GetById(gameId);
+            if (game == null)
+            {
+                await Clients.Caller.NotFound();
+                return;
+            }
+            var player = new Player(name, Context.ConnectionId, game);
             await playerRepository.Add(player);
             await Clients.Caller.SendPlayerUpdate(JsonConvert.SerializeObject(player));
         }
@@ -141,7 +147,7 @@ namespace werwolfonline.SignalR.Hubs
                 }
                 else
                 {
-                    
+
                 }
             }
         }
@@ -175,7 +181,8 @@ namespace werwolfonline.SignalR.Hubs
             var game = await gameRepository.GetById(gameId);
             if (game == null) { return; }
 
-            switch(game.Phase){
+            switch (game.Phase)
+            {
                 case Phase.NightWolves:
                     break;
             }

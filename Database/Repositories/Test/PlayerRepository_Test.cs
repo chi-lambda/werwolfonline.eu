@@ -8,7 +8,7 @@ namespace werwolfonline.Database.Repositories.Test
     public class PlayerRepository_Test
     {
         [Fact]
-        public async Task Test1()
+        public async Task Add_Player_Test()
         {
             var options = new DbContextOptionsBuilder<WerewolfContext>()
                 .UseInMemoryDatabase(databaseName: "Add_writes_to_database")
@@ -17,7 +17,7 @@ namespace werwolfonline.Database.Repositories.Test
             using (var context = new WerewolfContext(options))
             {
                 var repo = new PlayerRepository(context);
-                await repo.Add(new Player("Name1", "connectionId1"));
+                await repo.Add(new Player("Name1", "connectionId1", new Game()));
             }
 
             using (var context = new WerewolfContext(options))
