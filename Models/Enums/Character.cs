@@ -17,5 +17,6 @@ namespace werwolfonline.Models.Enums
         Pacifist = 12,
         OldMan = 13,
         GreatWolf = 14,
+        Slut = 15,
     }
 }

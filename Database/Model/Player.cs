@@ -1,4 +1,8 @@
 using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Security.Cryptography;
+using werwolfonline.Models.Enums;
 
 namespace werwolfonline.Database.Model
 {
@@ -8,24 +12,21 @@ namespace werwolfonline.Database.Model
         public string Name { get; set; } = "";
         public bool IsHost { get; set; }
         public bool IsAlive { get; set; }
+        public bool IsWerewolfVictim { get; set; }
+        public bool IsReady { get; set; }
         public int? VoteForId { get; set; }
         public Player? VoteFor { get; set; }
-        public int? AccuserId { get; set; }
-        public Player? Accuser { get; set; }
-        public Models.Enums.Character Character { get; set; }
-        public bool IsMayer { get; set; }
-        public int HealingPotions { get; set; }
-        public int DeathPotions { get; set; }
-        public int? WitchVictimId { get; set; }
-        public Player? WitchVictim { get; set; }
-        public bool WitchHeals { get; set; }
+        public Character Character { get; set; }
+        public bool IsMayor { get; set; }
+        public int HealingPotions { get; set; } = 1;
+        public int DeathPotions { get; set; } = 1;
         public int? ProtectorLastProtegeeId { get; set; }
         public Player? ProtectorLastProtegee { get; set; }
         public bool ParanormalUsed { get; set; }
-        public int? InLoveWithPlayerId { get; set; }
-        public Player? InLoverWithPlayer { get; set; }
+        public int? LoverId { get; set; }
+        public Player? Lover { get; set; }
         public bool HunterCanShoot { get; set; }
-        public int MayerPassesOn { get; set; }
+        public int MayorPassesOn { get; set; }
         public bool GreatWolfUsed { get; set; }
         public bool DiedTonight { get; set; }
         public int CountdownTo { get; set; }
@@ -34,8 +35,33 @@ namespace werwolfonline.Database.Model
         public string PopupText { get; set; } = "";
         public bool Ready { get; set; }
         public bool Reload { get; set; }
-        public Guid VerificationNumber { get; set; }
+        public string Secret { get; set; } = "";
         public int GameId { get; set; }
         public Game Game { get; set; } = null!;
+
+        public List<Player> Accusers { get; set; } = new List<Player>();
+        public List<Player> Voters { get; set; } = new List<Player>();
+
+        [NotMapped]
+        public string? Connectionid { get; set; }
+
+        public Player() { }
+        public Player(string name, string connectionId)
+        {
+            Name = name;
+            Connectionid = connectionId;
+            var rng = new RNGCryptoServiceProvider();
+            byte[] bytes = new byte[129];
+            rng.GetBytes(bytes);
+            Secret = System.Convert.ToBase64String(bytes);
+        }
+
+        public void MorningReset()
+        {
+            VoteFor = null;
+        }
+
+        public bool IsWerewolf => Character == Character.Werewolf || Character == Character.GreatWolf;
     }
+
 }

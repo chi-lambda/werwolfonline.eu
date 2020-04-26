@@ -14,10 +14,6 @@ namespace werwolfonline.Database
             modelBuilder.Entity<Game>()
                 .Property(game => game.Phase)
                 .HasConversion(new EnumToStringConverter<Phase>());
-
-            modelBuilder.Entity<Player>()
-                .Property(player => player.VerificationNumber)
-                .HasConversion(new GuidToStringConverter());
         }
     }
 }
