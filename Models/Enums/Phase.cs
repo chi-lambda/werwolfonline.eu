@@ -2,6 +2,7 @@ namespace werwolfonline.Models.Enums
 {
     public enum Phase
     {
+        WaitForPlayers,
         Setup,
         GameSetup,
         NightStart,

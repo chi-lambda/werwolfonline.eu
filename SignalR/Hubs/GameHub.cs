@@ -43,7 +43,7 @@ namespace werwolfonline.SignalR.Hubs
 
         public async Task CreateGame(string name)
         {
-            var game = await gameRepository.Add(new Game());
+            var game = await gameRepository.Add(new Game() { Phase = Phase.WaitForPlayers });
             System.Console.WriteLine("Game Id: {0}", game.Id);
             var player = await playerRepository.Add(new Player(name, Context.ConnectionId, game) { IsHost = true });
             var publicGame = game.GetPublicGame(player);
