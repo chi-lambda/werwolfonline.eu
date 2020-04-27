@@ -30,14 +30,14 @@ namespace werwolfonline.Database.Utils
         public ulong FromGermanWords(string s)
         {
             var mod = (ulong)germanWords.Length;
-            var words = s.Split('-');
+            var words = s.Split('-', StringSplitOptions.RemoveEmptyEntries);
             ulong result = 0;
             foreach (var word in words.Reverse())
             {
                 ulong val;
                 if (!germanReverseLookup.TryGetValue(word.ToLower(), out val))
                 {
-                    throw new ArgumentException($"Unknown word '{word}'.", "s");
+                    throw new ArgumentException($"Unknown word '{word}' in '{s}'.", "s");
                 }
                 result = result * mod + val;
             }

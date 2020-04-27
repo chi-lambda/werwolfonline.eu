@@ -21,6 +21,11 @@ namespace werwolfonline.Database.Repositories
             return await context.Players.FindAsync(id);
         }
 
+        public async Task<List<Player>> GetPlayersForGame(int gameId)
+        {
+            return await context.Players.Where(player => player.GameId == gameId).ToListAsync();
+        }
+
         public async Task<Player> GetWerewolfVictim(Game game)
         {
             return await context.Players.FindAsync(game.WerewolfVictimId);
@@ -45,7 +50,7 @@ namespace werwolfonline.Database.Repositories
                 .SingleOrDefaultAsync(player => player.GameId == gameId && player.Character == Character.Slut);
         }
 
-        public async Task<Player> GetVillager(int gameId)
+        public async Task<Player> GetVillagers(int gameId)
         {
             return await context.Players
                 .SingleOrDefaultAsync(player => player.GameId == gameId && player.Character == Character.Villager);
@@ -104,10 +109,11 @@ namespace werwolfonline.Database.Repositories
             await context.SaveChangesAsync();
         }
 
-        public async Task Add(Player player)
+        public async Task<Player> Add(Player player)
         {
             context.Add(player);
             await context.SaveChangesAsync();
+            return player;
         }
 
         public async Task ResetPlayer(Player player)

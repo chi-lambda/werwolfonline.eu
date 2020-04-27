@@ -1,6 +1,44 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿<div id="app">
+    <div v-if="page == 'start'">
+        <div class="w3-row">
+            <div class="w3-half w3-container">
+                <div class="w3-card-4 w3-panel w3-padding-16">
+                    <h2>Spiel beitreten</h2>
+                    <label>Spielnummer/Magische Worte</label>
+                    <input class="w3-input w3-border w3-round-large" type="text" v-model="gameNumber" placeholder="z.B. 738278923 oder ein-paar-worte">
+                    <label>Name</label>
+                    <input class="w3-input w3-border w3-round-large" type="text" v-model="name">
+                    <button class="w3-button w3-green w3-block w3-margin-top" v-on:click="joinGame()">Beitreten</button>
+                </div>
+            </div>
+            <div class="w3-half w3-container">
+                <div class="w3-card-4 w3-panel w3-padding-16">
+                    <h2>Neues Spiel</h2>
+                    <label>Name</label>
+                    <input class="w3-input w3-border w3-round-large" type="text" v-model="name">
+                    <button class="w3-button w3-green w3-block w3-margin-top" v-on:click="createGame()">Erstellen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div v-if="page == 'new-game'">
+        <div class="w3-panel w3-card-4 w3-container">
+            <div>Spielnummer: {{ game.gameNumber }}</div>
+            <div>Magische Worte: {{ game.gameNumberWords }}</div>
+            <div>
+                <h2>Spieler</h2>
+                <table class="w3-table">
+                    <tr v-for="player in game.players">
+                        <td>{{ player.name }}{{ player.isHost ? '*' : '' }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
 
-<script src="~/js/signalr/dist/browser/signalr.js"></script>
-<script src="~/js/gamehandler.js"></script>
+@section Scripts {
+    <script src="~/js/vue.js"></script>
+    <script src="~/js/ui.js"></script>
+    <script src="~/js/signalr/dist/browser/signalr.js"></script>
+}

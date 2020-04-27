@@ -1,12 +1,28 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using werwolfonline.Database.Utils;
 using werwolfonline.Models.Enums;
+using werwolfonline.SignalR.Model;
 
 namespace werwolfonline.Database.Model
 {
     public class Game
     {
+        private readonly CorrectHorseBatteryStaple chbs;
+
+        public Game() : this(new CorrectHorseBatteryStaple()) { }
+
+        public Game(CorrectHorseBatteryStaple chbs)
+        {
+            this.chbs = chbs;
+            GameNumber = (ulong)new Random().Next();
+        }
+
         public int Id { get; set; }
+        public ulong GameNumber { get; set; }
+        [NotMapped]
+        public string GameNumberWords => chbs.ToGermanWords(GameNumber);
         public Phase Phase { get; set; }
         public bool RevealCharacters { get; set; }
         public bool PassOnMayor { get; set; }
@@ -30,5 +46,10 @@ namespace werwolfonline.Database.Model
         public string Log { get; set; } = "";
         public DateTime LastAccess { get; set; }
         public virtual List<Player> Players { get; set; } = new List<Player>();
+
+        public PublicGame GetPublicGame(Player player)
+        {
+            return new PublicGame(this, player);
+        }
     }
 }

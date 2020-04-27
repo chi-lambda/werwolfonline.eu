@@ -1,12 +1,15 @@
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using werwolfonline.Database.Model;
+using werwolfonline.Database.Utils;
 using Xunit;
 
 namespace werwolfonline.Database.Repositories.Test
 {
     public class GameRepository_Test
     {
+        private readonly CorrectHorseBatteryStaple chbs = new CorrectHorseBatteryStaple();
+
         [Fact]
         public async Task Add_Game_Test()
         {
@@ -16,13 +19,13 @@ namespace werwolfonline.Database.Repositories.Test
 
             using (var context = new WerewolfContext(options))
             {
-                var repo = new GameRepository(context);
+                var repo = new GameRepository(context, chbs);
                 await repo.Add(new Game());
             }
 
             using (var context = new WerewolfContext(options))
             {
-                var repo = new GameRepository(context);
+                var repo = new GameRepository(context, chbs);
                 Assert.Equal(1, await repo.Count());
             }
         }
@@ -36,7 +39,7 @@ namespace werwolfonline.Database.Repositories.Test
 
             using (var context = new WerewolfContext(options))
             {
-                var gameRepo = new GameRepository(context);
+                var gameRepo = new GameRepository(context, chbs);
                 var playerRepo = new PlayerRepository(context);
                 var game = new Game();
                 await gameRepo.Add(game);
@@ -46,7 +49,7 @@ namespace werwolfonline.Database.Repositories.Test
 
             using (var context = new WerewolfContext(options))
             {
-                var gameRepo = new GameRepository(context);
+                var gameRepo = new GameRepository(context, chbs);
                 var playerRepo = new PlayerRepository(context);
                 var game = await gameRepo.GetById(1);
                 Assert.Equal(1, await gameRepo.Count());

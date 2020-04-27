@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
+using System.Text.Json.Serialization;
 using werwolfonline.Models.Enums;
+using werwolfonline.SignalR.Model;
 
 namespace werwolfonline.Database.Model
 {
@@ -42,8 +44,9 @@ namespace werwolfonline.Database.Model
         public bool Reload { get; set; }
         public string Secret { get; set; } = "";
         public int GameId { get; set; }
+        [JsonIgnore]
         public virtual Game Game { get; set; } = null!;
-        public List<Player> Voters { get; set; } = new List<Player>();
+        public virtual List<Player> Voters { get; set; } = new List<Player>();
 
         [NotMapped]
         public string? ConnectionId { get; set; }
@@ -63,6 +66,10 @@ namespace werwolfonline.Database.Model
         public void MorningReset()
         {
             VoteFor = null;
+        }
+
+        public PublicPlayer GetPublicPlayer(){
+            return new PublicPlayer(this);
         }
 
         public bool IsWerewolf => Character == Character.Werewolf || Character == Character.GreatWolf;

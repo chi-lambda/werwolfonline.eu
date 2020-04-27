@@ -5,9 +5,13 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using werwolfonline.Database;
+using werwolfonline.Database.Repositories;
+using werwolfonline.Database.Utils;
 using werwolfonline.SignalR.Hubs;
 
 namespace werwolfonline
@@ -26,6 +30,16 @@ namespace werwolfonline
         {
             services.AddControllersWithViews();
             services.AddSignalR();
+
+            services.AddSingleton<DbContextOptions<WerewolfContext>>(new DbContextOptionsBuilder<WerewolfContext>()
+                .UseInMemoryDatabase(databaseName: "Test_Database")
+                .UseLazyLoadingProxies()
+                .Options);
+
+            services.AddSingleton<CorrectHorseBatteryStaple>();
+            services.AddSingleton<WerewolfContext>();
+            services.AddSingleton<GameRepository>();
+            services.AddSingleton<PlayerRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -41,7 +55,7 @@ namespace werwolfonline
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-            app.UseHttpsRedirection();
+            //app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();

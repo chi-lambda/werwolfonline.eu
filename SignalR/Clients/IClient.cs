@@ -1,11 +1,12 @@
 using System.Threading.Tasks;
+using werwolfonline.SignalR.Model;
 
 namespace werwolfonline.SignalR.Clients
 {
     public interface IClient
     {
-        Task SendPlayerUpdate(string playerJson);
-        Task SendGameUpdate(string gameJson);
+        Task SendPlayerUpdate(PublicPlayer player);
+        Task SendGameUpdate(PublicGame game);
         Task SetConnectionId(string connectionId);
         Task RevealIdentity(string identity);
         Task NotFound();
@@ -18,5 +19,6 @@ namespace werwolfonline.SignalR.Clients
         Task AskWitch();
         Task AskWerewolf();
         Task GoToSleep();
+        Task WaitForHunter();
     }
 }
