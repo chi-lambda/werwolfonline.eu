@@ -30,6 +30,7 @@ namespace werwolfonline.Database.Repositories.Test
             }
         }
 
+        [Fact]
         public async Task Add_Game_With_Players_Test()
         {
             var options = new DbContextOptionsBuilder<WerewolfContext>()
