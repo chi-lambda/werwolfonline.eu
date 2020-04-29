@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using werwolfonline.Database.Model;
 using werwolfonline.Database.Utils;
+using werwolfonline.Models.Enums;
 
 namespace werwolfonline.Database.Repositories
 {
@@ -40,6 +41,12 @@ namespace werwolfonline.Database.Repositories
         public async Task<int> Count()
         {
             return await context.Games.CountAsync();
+        }
+
+        public async Task SetPhase(Game game, Phase phase)
+        {
+            game.Phase = phase;
+            await context.SaveChangesAsync();
         }
 
         public async Task<Game> Add(Game game)

@@ -78,6 +78,10 @@ namespace werwolfonline.Database.Repositories
             return await context.Players.CountAsync(player => player.Character == Character.GreatWolf || player.Character == Character.Werewolf);
         }
 
+        public async Task<Player> GetByConnectionId(string connectionId){
+            return await context.Players.Where(player => player.ConnectionId == connectionId).Include(player => player.Game).SingleOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<Player>> GetAll()
         {
             return await context.Players.ToListAsync();

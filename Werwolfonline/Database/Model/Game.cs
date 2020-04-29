@@ -41,6 +41,7 @@ namespace werwolfonline.Database.Model
         public int VillageTimerBonusPerPlayer { get; set; }
         public int RunOffVoteTimer { get; set; }
         public int RunOffVoteTimerBonusPerPlayer { get; set; }
+        public int ExtraCardCount { get; set; }
         public string MessageOfTheDay { get; set; } = "";
         public int Night { get; set; }
         public string Log { get; set; } = "";
@@ -50,6 +51,15 @@ namespace werwolfonline.Database.Model
         public PublicGame GetPublicGame(Player player)
         {
             return new PublicGame(this, player);
+        }
+        public Game AddCharacterCounts(){
+            CharacterCounts.Add(new CharacterCount { Character = Character.Werewolf, Count = 1 });
+            CharacterCounts.Add(new CharacterCount { Character = Character.Hunter, Count = 1 });
+            CharacterCounts.Add(new CharacterCount { Character = Character.Seer, Count = 1 });
+            CharacterCounts.Add(new CharacterCount { Character = Character.Amor, Count = 1 });
+            CharacterCounts.Add(new CharacterCount { Character = Character.Witch, Count = 1 });
+            CharacterCounts.Add(new CharacterCount { Character = Character.Villager, Count = 1 });
+            return this;
         }
     }
 }

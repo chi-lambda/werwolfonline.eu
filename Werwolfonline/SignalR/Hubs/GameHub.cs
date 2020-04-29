@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
-using Newtonsoft.Json;
+using Microsoft.Extensions.Logging;
 using werwolfonline.Database.Model;
 using werwolfonline.Database.Repositories;
 using werwolfonline.Models.Enums;
@@ -16,11 +16,13 @@ namespace werwolfonline.SignalR.Hubs
 
         private GameRepository gameRepository;
         private PlayerRepository playerRepository;
+        private readonly ILogger<GameHub> logger;
 
-        public GameHub(GameRepository gameRepository, PlayerRepository playerRepository) : base()
+        public GameHub(GameRepository gameRepository, PlayerRepository playerRepository, ILogger<GameHub> logger) : base()
         {
             this.gameRepository = gameRepository;
             this.playerRepository = playerRepository;
+            this.logger = logger;
         }
 
         public async Task JoinGame(string gameNumber, string name)
@@ -30,9 +32,12 @@ namespace werwolfonline.SignalR.Hubs
             {
                 await Clients.Caller.NotFound();
             }
+            else if (game.Phase != Phase.WaitForPlayers)
+            {
+                await Clients.Caller.NotAuthorized();
+            }
             else
             {
-                System.Console.WriteLine("Game Id: {0}", game.Id);
                 var player = await playerRepository.Add(new Player(name, Context.ConnectionId, game));
                 var publicGame = new PublicGame(game, player);
                 var allPlayers = await playerRepository.GetPlayersForGame(game.Id);
@@ -43,11 +48,31 @@ namespace werwolfonline.SignalR.Hubs
 
         public async Task CreateGame(string name)
         {
-            var game = await gameRepository.Add(new Game() { Phase = Phase.WaitForPlayers });
-            System.Console.WriteLine("Game Id: {0}", game.Id);
+            var game = await gameRepository.Add(new Game() { Phase = Phase.WaitForPlayers }.AddCharacterCounts());
             var player = await playerRepository.Add(new Player(name, Context.ConnectionId, game) { IsHost = true });
             var publicGame = game.GetPublicGame(player);
             await Clients.Caller.SendGameUpdate(publicGame);
+        }
+
+        public async Task StartSetup()
+        {
+            var callingPlayer = await playerRepository.GetByConnectionId(Context.ConnectionId);
+            if (callingPlayer == null)
+            {
+                await Clients.Caller.NotFound();
+                return;
+            }
+            if (!callingPlayer.IsHost)
+            {
+                await Clients.Caller.NotAuthorized();
+                return;
+            }
+            await gameRepository.SetPhase(callingPlayer.Game, Phase.Setup);
+            var players = await playerRepository.GetPlayersForGame(callingPlayer.GameId);
+            foreach (var player in players)
+            {
+                await Clients.Client(player.ConnectionId).SendGameUpdate(callingPlayer.Game.GetPublicGame(player));
+            }
         }
 
         public async Task LoadPlayer(int playerId, string secret)
@@ -202,7 +227,11 @@ namespace werwolfonline.SignalR.Hubs
             if (player.Character == Character.Hunter)
             {
                 await Clients.Client(player.ConnectionId).AskHunter();
-                await Clients.AllExcept(player.ConnectionId).WaitForHunter();
+                var otherPlayers = (await playerRepository.GetPlayersForGame(player.GameId))
+                    .Where(p => p.ConnectionId != player.ConnectionId)
+                    .Select(p => p.ConnectionId)
+                    .ToList();
+                await Clients.Clients(otherPlayers).WaitForHunter();
             }
             player.IsAlive = false;
         }

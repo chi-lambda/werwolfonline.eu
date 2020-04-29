@@ -22,7 +22,6 @@
         </div>
     </div>
     <div v-if="page == 'new-game'">
-        <div class="w3-panel w3-card-4 w3-container">
             <div>Spielnummer: {{ game.gameNumber }}</div>
             <div>Magische Worte: {{ game.gameNumberWords }}</div>
             <div>
@@ -33,6 +32,54 @@
                     </tr>
                 </table>
             </div>
+            <div>
+                <button class="w3-button w3-green w3-block" v-on:click="startSetup()" v-if="game.player.isHost">Alle Spieler sind da – Spiel konfigurieren</button>
+            </div>
+        </div>
+    </div>
+    <div v-if="page == 'setup'">
+        <div class="w3-panel w3-card-4 w3-container">
+            <div class="w3-panel">Wie viele Karten sollen eingemischt werden?</div>
+            <table class="w3-table w3-striped w3-hover">
+                <thead>
+                    <tr>
+                        <td>Charakter</td>
+                        <td>Anzahl</td>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Werwölfe</td>
+                        <td><input class="w3-input" type="number" v-model="werewolfCount"></td>
+                    </tr>
+                    <tr>
+                        <td>Hexen</td>
+                        <td><input class="w3-input" type="number" v-model="witchCount"></td>
+                    </tr>
+                    <tr>
+                        <td>Seherinnen</td>
+                        <td><input class="w3-input" type="number" v-model="seerCount"></td>
+                    </tr>
+                    <tr>
+                        <td>Jäger</td>
+                        <td><input class="w3-input" type="number" v-model="hunterCount"></td>
+                    </tr>
+                    <tr>
+                        <td>Amor (maximal 1)</td>
+                        <td><input class="w3-input" type="number" v-model="amorCount"></td>
+                    </tr>
+                    <tr>
+                        <td>Dorfbewohner</td>
+                        <td><input class="w3-input" type="number" v-model="villagerCount"></td>
+                    </tr>
+                    <tr class="w3-topbar">
+                        <td>Karten insgesamt</td>
+                        <td>{{ totalCardCount }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="w3-panel w3-pale-red w3-leftbar w3-border-red" v-if="notEnoughCards">Es sind nicht genug Karten für die angemeldeten Spieler eingemischt.</div>
+            <div class="w3-panel w3-pale-red w3-leftbar w3-border-red" v-if="fewCards">Es wird empfohlen, mindestens zwei Karten mehr als Spieler einzumischen.</div>
         </div>
     </div>
 </div>

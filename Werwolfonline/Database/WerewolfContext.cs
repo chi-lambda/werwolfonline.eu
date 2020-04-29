@@ -11,6 +11,7 @@ namespace werwolfonline.Database
 
         public DbSet<Player> Players { get; set; } = null!;
         public DbSet<Game> Games { get; set; } = null!;
+        public DbSet<CharacterCount> CharacterCounts { get; set; } = null!;
 
         public WerewolfContext() { }
         public WerewolfContext(DbContextOptions<WerewolfContext> options) : base(options) { }
@@ -23,6 +24,10 @@ namespace werwolfonline.Database
 
             modelBuilder.Entity<Game>()
                 .HasOne(game => game.WerewolfVictim);
+
+            modelBuilder.Entity<CharacterCount>()
+                .HasOne(cc => cc.Game)
+                .WithMany(game => game.CharacterCounts);
 
             modelBuilder.Entity<Player>()
                 .HasOne(player => player.Game)
@@ -40,6 +45,9 @@ namespace werwolfonline.Database
 
             modelBuilder.Entity<Player>()
                 .HasOne(player => player.LastAssociate);
+
+            modelBuilder.Entity<Player>()
+                .HasIndex(player => player.ConnectionId);
         }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

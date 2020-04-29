@@ -19,6 +19,7 @@ namespace werwolfonline.SignalR.Model
             Log = game.Log;
             Player = player;
             Players = game.Players.Select(player => new PublicPlayer(player)).ToList();
+            CharacterCounts = game.CharacterCounts;
         }
         public int Id { get; set; }
         public ulong GameNumber { get; set; }
@@ -30,5 +31,6 @@ namespace werwolfonline.SignalR.Model
         public string Log { get; set; } = "";
         public Player Player { get; set; } = null!;
         public List<PublicPlayer> Players { get; set; } = new List<PublicPlayer>();
+        public List<CharacterCount> CharacterCounts { get; set; } = new List<CharacterCount>();
     }
 }

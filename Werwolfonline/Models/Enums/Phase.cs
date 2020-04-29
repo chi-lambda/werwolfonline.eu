@@ -4,7 +4,6 @@ namespace werwolfonline.Models.Enums
     {
         WaitForPlayers,
         Setup,
-        GameSetup,
         NightStart,
         NightAmor,
         NightSeer,
