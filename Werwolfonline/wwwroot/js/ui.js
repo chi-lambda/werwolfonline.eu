@@ -150,7 +150,8 @@ jQuery(document).ready(function () {
                 return this.game.characterCounts.reduce((a, x) => (a | 0) + (x.count | 0), 0) < this.game.players.length;
             },
             fewCards: function () {
-                return this.game.characterCounts.reduce((a, x) => (a | 0) + (x.count | 0), 0) < this.game.players.length + 2;
+                return this.game.characterCounts.reduce((a, x) => (a | 0) + (x.count | 0), 0) < this.game.players.length + 2
+                        && this.game.characterCounts.reduce((a, x) => (a | 0) + (x.count | 0), 0) >= this.game.players.length;
             }
         },
         created: function () {

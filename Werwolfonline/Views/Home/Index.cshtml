@@ -22,6 +22,7 @@
         </div>
     </div>
     <div v-if="page == 'new-game'">
+        <div class="w3-panel w3-card-4 w3-container">
             <div>Spielnummer: {{ game.gameNumber }}</div>
             <div>Magische Worte: {{ game.gameNumberWords }}</div>
             <div>
@@ -78,8 +79,11 @@
                     </tr>
                 </tbody>
             </table>
+            <div><input type="checkbox" v-model="game.seerSeesIdentity" id="seer-sees-identity"><label for="seer-sees-identity">Seherin sieht volle Identität.</label></div>
+            <div><input type="checkbox" v-model="game.revealIdentity" id="reveal-identity"><label for="reveal-identity">Identität nach Tod aufdecken.</label></div>
             <div class="w3-panel w3-pale-red w3-leftbar w3-border-red" v-if="notEnoughCards">Es sind nicht genug Karten für die angemeldeten Spieler eingemischt.</div>
             <div class="w3-panel w3-pale-red w3-leftbar w3-border-red" v-if="fewCards">Es wird empfohlen, mindestens zwei Karten mehr als Spieler einzumischen.</div>
+            <button v-bind:class="{'w3-green': !notEnoughCards && !fewCards, 'w3-yellow':fewCards, 'w3-red':notEnoughCards, 'w3-button':true, 'w3-block':true}" v-on:click="startGame()" v-bind:disabled="notEnoughCards">Spiel starten</button>
         </div>
     </div>
 </div>
