@@ -35,6 +35,37 @@ function setCharacterCount(game, character, count) {
     countEntities[0].count = count;
 }
 
+function createGameUpdateHandler(vue) {
+    let f = function (game) {
+        switch (game.phaseString) {
+            case 'WaitForPlayers':
+                vue.game = game;
+                vue.page = 'new-game';
+                vue.connection.off('NotAuthorized');
+                vue.connection.off('NotFound');
+                vue.connection.on('NotAuthorized.', function () {
+                    alert('Du darfst das Spiel nicht starten!');
+                })
+                vue.game.players = game.players;
+                break;
+            case 'Setup':
+                vue.game = game;
+                vue.page = 'setup';
+                vue.connection.off('NotFound');
+                vue.connection.off('NotAuthorized');
+                vue.connection.on('NotAuthorized.', function () {
+                    alert('Du darfst das Spiel nicht starten!');
+                })
+                vue.game.characterCounts = game.characterCounts;
+                if (game.phaseString === 'Night') {
+                    vue.page = 'night';
+                    vue.game = game;
+                }
+                break;
+        }
+    }
+    return f;
+}
 
 jQuery(document).ready(function () {
     "use strict"
@@ -49,20 +80,7 @@ jQuery(document).ready(function () {
         },
         methods: {
             joinGame: function () {
-                this.connection.on('SendGameUpdate', game => {
-                    this.game = game;
-                    this.page = 'new-game';
-                    this.connection.off('SendGameUpdate');
-                    this.connection.off('NotAuthorized');
-                    this.connection.on('SendGameUpdate', game => {
-                        this.game.players = game.players;
-                        if (game.phaseString === 'Setup') {
-                            this.page = 'setup';
-                            this.game = game;
-                            this.connection.off('SendGameUpdate');
-                        }
-                    });
-                })
+                this.connection.on('SendGameUpdate', createGameUpdateHandler(this));
                 this.connection.on('NotAuthorized', () => {
                     alert('Du kannst diesem Spiel nicht mehr beitreten.');
                 });
@@ -71,19 +89,7 @@ jQuery(document).ready(function () {
                 });
             },
             createGame: function () {
-                this.connection.on('SendGameUpdate', game => {
-                    this.game = game;
-                    this.page = 'new-game';
-                    this.connection.off('SendGameUpdate');
-                    this.connection.on('SendGameUpdate', game => {
-                        this.game.players = game.players;
-                        if (game.phaseString === 'Setup') {
-                            this.page = 'setup';
-                            this.game = game;
-                            this.connection.off('SendGameUpdate');
-                        }
-                    });
-                })
+                this.connection.on('SendGameUpdate', createGameUpdateHandler(this))
                 this.connection.invoke('CreateGame', this.name).catch(function (err) {
                     return console.error(err.toString());
                 });
@@ -93,6 +99,11 @@ jQuery(document).ready(function () {
                     return console.error(err.toString());
                 });
             },
+            startGame: function () {
+                this.connection.invoke('StartGame').catch(function (err) {
+                    return console.error(err.toString());
+                });
+            }
         },
         computed: {
             werewolfCount: {
