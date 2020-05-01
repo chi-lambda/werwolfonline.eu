@@ -51,17 +51,20 @@ function createGameUpdateHandler(vue) {
             case 'Setup':
                 vue.game = game;
                 vue.page = 'setup';
-                vue.connection.off('NotFound');
-                vue.connection.off('NotAuthorized');
                 vue.connection.on('NotAuthorized.', function () {
                     alert('Du darfst das Spiel nicht starten!');
                 })
                 vue.game.characterCounts = game.characterCounts;
-                if (game.phaseString === 'Night') {
-                    vue.page = 'night';
-                    vue.game = game;
-                }
                 break;
+            case 'Night':
+                $('body').addClass('w3-black');
+                vue.game = game;
+                vue.page = 'night';
+                vue.connection.off('NotFound');
+                vue.connection.off('NotAuthorized');
+                vue.connection.on('AskWerewolves', function () {
+
+                })
         }
     }
     return f;
@@ -100,7 +103,7 @@ jQuery(document).ready(function () {
                 });
             },
             startGame: function () {
-                this.connection.invoke('StartGame').catch(function (err) {
+                this.connection.invoke('StartGame', this.game).catch(function (err) {
                     return console.error(err.toString());
                 });
             }
@@ -162,7 +165,7 @@ jQuery(document).ready(function () {
             },
             fewCards: function () {
                 return this.game.characterCounts.reduce((a, x) => (a | 0) + (x.count | 0), 0) < this.game.players.length + 2
-                        && this.game.characterCounts.reduce((a, x) => (a | 0) + (x.count | 0), 0) >= this.game.players.length;
+                    && this.game.characterCounts.reduce((a, x) => (a | 0) + (x.count | 0), 0) >= this.game.players.length;
             }
         },
         created: function () {

@@ -75,6 +75,22 @@ namespace werwolfonline.SignalR.Hubs
             }
         }
 
+        public async Task StartGame(PublicGame game)
+        {
+            var caller =await playerRepository.GetByConnectionId(Context.ConnectionId);
+            if(!caller.IsHost || caller.Id!=game.Id){
+                await Clients.Caller.NotAuthorized();
+                return;
+            }
+            await gameRepository.SetCharacterCounts(caller.Game, game.CharacterCounts);
+            var players = await playerRepository.GetPlayersForGame(caller.GameId);
+            await playerRepository.AssignRoles(players, caller.Game.CharacterCounts);
+            await gameRepository.SetPhase(caller.Game, Phase.NightAmor);
+            foreach(var player in players){
+                await Clients.Client(player.ConnectionId).SendGameUpdate(caller.Game.GetPublicGame(player));
+            }
+        }
+
         public async Task LoadPlayer(int playerId, string secret)
         {
             var player = await playerRepository.GetById(playerId);

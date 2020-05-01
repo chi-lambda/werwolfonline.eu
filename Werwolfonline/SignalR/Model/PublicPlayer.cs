@@ -4,6 +4,7 @@ namespace werwolfonline.SignalR.Model
 {
     public class PublicPlayer
     {
+        public PublicPlayer() { }
         public PublicPlayer(Player player)
         {
             Id = player.Id;

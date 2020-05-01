@@ -71,7 +71,7 @@
                     </tr>
                     <tr>
                         <td>Dorfbewohner</td>
-                        <td><input class="w3-input" type="number" v-model="villagerCount"></td>
+                        <td><input class="w3-input" type="number" v-model="villagerCount" v-bind:readonly="!game.player.isHost"></td>
                     </tr>
                     <tr class="w3-topbar">
                         <td>Karten insgesamt</td>
@@ -79,11 +79,16 @@
                     </tr>
                 </tbody>
             </table>
-            <div><input type="checkbox" v-model="game.seerSeesIdentity" id="seer-sees-identity"><label for="seer-sees-identity">Seherin sieht volle Identität.</label></div>
-            <div><input type="checkbox" v-model="game.revealIdentity" id="reveal-identity"><label for="reveal-identity">Identität nach Tod aufdecken.</label></div>
+            <div><input type="checkbox" v-model="game.seerSeesIdentity" id="seer-sees-identity" class="w3-check"><label for="seer-sees-identity">Seherin sieht volle Identität.</label></div>
+            <div><input type="checkbox" v-model="game.revealIdentity" id="reveal-identity" class="w3-check"><label for="reveal-identity">Identität nach Tod aufdecken.</label></div>
             <div class="w3-panel w3-pale-red w3-leftbar w3-border-red" v-if="notEnoughCards">Es sind nicht genug Karten für die angemeldeten Spieler eingemischt.</div>
             <div class="w3-panel w3-pale-red w3-leftbar w3-border-red" v-if="fewCards">Es wird empfohlen, mindestens zwei Karten mehr als Spieler einzumischen.</div>
-            <button v-bind:class="{'w3-green': !notEnoughCards && !fewCards, 'w3-yellow':fewCards, 'w3-red':notEnoughCards, 'w3-button':true, 'w3-block':true}" v-on:click="startGame()" v-bind:disabled="notEnoughCards">Spiel starten</button>
+            <button v-bind:class="{'w3-green': !notEnoughCards && !fewCards, 'w3-yellow':fewCards, 'w3-red':notEnoughCards, 'w3-button':true, 'w3-block':true}" v-on:click="startGame()" v-bind:disabled="notEnoughCards" v-if="game.player.isHost">Spiel starten</button>
+        </div>
+    </div>
+    <div v-if="page == 'night'" class="w3-black">
+        <div class="w3-panel w3-card-4 w3-container">
+            Es ist Nacht.
         </div>
     </div>
 </div>

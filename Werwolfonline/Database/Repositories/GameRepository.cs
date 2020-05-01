@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using werwolfonline.Database.Model;
@@ -45,7 +46,25 @@ namespace werwolfonline.Database.Repositories
 
         public async Task SetPhase(Game game, Phase phase)
         {
+            if (game.Phase == Phase.NightAmor)
+            {
+                game.Night++;
+                if (game.Night > 1)
+                {
+                    phase = Phase.NightSeer;
+                }
+            }
             game.Phase = phase;
+            await context.SaveChangesAsync();
+        }
+
+        public async Task SetCharacterCounts(Game game, IEnumerable<CharacterCount> characterCounts)
+        {
+            var dict = characterCounts.ToDictionary(k => k.Character, v => v.Count);
+            foreach (var cc in game.CharacterCounts)
+            {
+                cc.Count = dict[cc.Character];
+            }
             await context.SaveChangesAsync();
         }
 

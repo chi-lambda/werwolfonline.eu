@@ -13,7 +13,10 @@ namespace werwolfonline.SignalR.Model
             Id = game.Id;
             GameNumber = game.GameNumber;
             GameNumberWords = game.GameNumberWords;
-            Phase = game.Phase;
+            PhaseString = game.Phase.ToString();
+            if(PhaseString.StartsWith("Night")){
+                PhaseString = "Night";
+            }
             MessageOfTheDay = game.MessageOfTheDay;
             RevealCharacters = game.RevealCharacters;
             SeerSeesIdentity = game.SeerSeesIdentity;
@@ -27,8 +30,7 @@ namespace werwolfonline.SignalR.Model
         public int Id { get; set; }
         public ulong GameNumber { get; set; }
         public string GameNumberWords { get; private set; } = "";
-        public Phase Phase { get; set; }
-        public string PhaseString => Phase.ToString();
+        public string PhaseString { get; set; } = "";
         public string MessageOfTheDay { get; set; } = "";
         public bool RevealCharacters{ get; set; }
         public bool SeerSeesIdentity{ get; set; }

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -78,7 +79,8 @@ namespace werwolfonline.Database.Repositories
             return await context.Players.CountAsync(player => player.Character == Character.GreatWolf || player.Character == Character.Werewolf);
         }
 
-        public async Task<Player> GetByConnectionId(string connectionId){
+        public async Task<Player> GetByConnectionId(string connectionId)
+        {
             return await context.Players.Where(player => player.ConnectionId == connectionId).Include(player => player.Game).SingleOrDefaultAsync();
         }
 
@@ -111,6 +113,22 @@ namespace werwolfonline.Database.Repositories
         {
             player.DiedTonight = state;
             await context.SaveChangesAsync();
+        }
+
+        public async Task AssignRoles(IEnumerable<Player> players, IEnumerable<CharacterCount> characterCounts)
+        {
+            var characterList = characterCounts
+                .SelectMany(cc => Enumerable.Repeat(cc.Character, cc.Count))
+                .ToList();
+            var rnd = new Random();
+            foreach (var player in players)
+            {
+                var pos = rnd.Next(characterList.Count);
+                player.Character = characterList[pos];
+                characterList.RemoveAt(pos);
+            }
+
+            await Save();
         }
 
         public async Task<Player> Add(Player player)
