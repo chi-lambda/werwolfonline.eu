@@ -32,7 +32,7 @@ function setCharacterCount(game, character, count) {
     if (game == null) { return null; }
     let countEntities = game.characterCounts.filter(cc => cc.characterString === character);
     if (countEntities.length == 0) { return null; }
-    countEntities[0].count = count;
+    countEntities[0].count = count|0;
 }
 
 function createGameUpdateHandler(vue) {
@@ -43,7 +43,7 @@ function createGameUpdateHandler(vue) {
                 vue.page = 'new-game';
                 vue.connection.off('NotAuthorized');
                 vue.connection.off('NotFound');
-                vue.connection.on('NotAuthorized.', function () {
+                vue.connection.on('NotAuthorized', function () {
                     alert('Du darfst das Spiel nicht starten!');
                 })
                 vue.game.players = game.players;
@@ -51,7 +51,7 @@ function createGameUpdateHandler(vue) {
             case 'Setup':
                 vue.game = game;
                 vue.page = 'setup';
-                vue.connection.on('NotAuthorized.', function () {
+                vue.connection.on('NotAuthorized', function () {
                     alert('Du darfst das Spiel nicht starten!');
                 })
                 vue.game.characterCounts = game.characterCounts;
@@ -62,9 +62,16 @@ function createGameUpdateHandler(vue) {
                 vue.page = 'night';
                 vue.connection.off('NotFound');
                 vue.connection.off('NotAuthorized');
-                vue.connection.on('AskWerewolves', function () {
-
-                })
+                vue.connection.on('AskWerewolf', function () {
+                    vue.connection.off('SendGameUpdate');
+                    vue.connection.on('SendGameUpdate', function (game) {
+                        vue.game.players = game.players;
+                    })
+                    vue.connection.on('GoToSleep', function () {
+                        vue.connection.off('SendGameUpdate', createGameUpdateHandler(vue));
+                    })
+                    vue.page = 'werewolf';
+                });
         }
     }
     return f;
@@ -104,6 +111,11 @@ jQuery(document).ready(function () {
             },
             startGame: function () {
                 this.connection.invoke('StartGame', this.game).catch(function (err) {
+                    return console.error(err.toString());
+                });
+            },
+            voteFor: function (id) {
+                this.connection.invoke('VoteFor', id).catch(function (err) {
                     return console.error(err.toString());
                 });
             }

@@ -1,7 +1,9 @@
+using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using werwolfonline.Database.Model;
 using werwolfonline.Database.Utils;
+using werwolfonline.Models.Enums;
 using Xunit;
 
 namespace werwolfonline.Database.Repositories.Test
@@ -56,6 +58,111 @@ namespace werwolfonline.Database.Repositories.Test
                 Assert.Equal(1, await gameRepo.Count());
                 Assert.Equal(2, await playerRepo.Count());
                 Assert.Equal(2, game.Players.Count);
+            }
+        }
+
+        [Fact]
+        public async Task Set_Phase_Without_Amor_and_Seer_Test()
+        {
+            var options = new DbContextOptionsBuilder<WerewolfContext>()
+                .UseInMemoryDatabase(databaseName: "Set_Phase_Without_Amor_and_Seer_database")
+                .UseLazyLoadingProxies()
+                .Options;
+
+            using (var context = new WerewolfContext(options))
+            {
+                var gameRepo = new GameRepository(context, chbs);
+                var playerRepo = new PlayerRepository(context);
+                var game = new Game();
+                await gameRepo.Add(game);
+                await playerRepo.Add(new Player() { Game = game, Character = Character.Werewolf });
+                await gameRepo.SetPhase(game, Phase.NightAmor);
+                Assert.Equal(Phase.NightWolves, game.Phase);
+            }
+        }
+
+        [Fact]
+        public async Task Set_Phase_With_Amor_Test()
+        {
+            var options = new DbContextOptionsBuilder<WerewolfContext>()
+                .UseInMemoryDatabase(databaseName: "Set_Phase_With_Amor_database")
+                .UseLazyLoadingProxies()
+                .Options;
+
+            using (var context = new WerewolfContext(options))
+            {
+                var gameRepo = new GameRepository(context, chbs);
+                var playerRepo = new PlayerRepository(context);
+                var game = new Game();
+                await gameRepo.Add(game);
+                await playerRepo.Add(new Player() { Game = game, Character = Character.Werewolf });
+                await playerRepo.Add(new Player() { Game = game, Character = Character.Amor });
+                await gameRepo.SetPhase(game, Phase.NightAmor);
+                Assert.Equal(Phase.NightAmor, game.Phase);
+            }
+        }
+
+        [Fact]
+        public async Task Set_Phase_With_Amor_Second_Night_Test()
+        {
+            var options = new DbContextOptionsBuilder<WerewolfContext>()
+                .UseInMemoryDatabase(databaseName: "Set_Phase_With_Amor_Second_Night_database")
+                .UseLazyLoadingProxies()
+                .Options;
+
+            using (var context = new WerewolfContext(options))
+            {
+                var gameRepo = new GameRepository(context, chbs);
+                var playerRepo = new PlayerRepository(context);
+                var game = new Game() { Night = 1 };
+                await gameRepo.Add(game);
+                await playerRepo.Add(new Player() { Game = game, Character = Character.Werewolf });
+                await playerRepo.Add(new Player() { Game = game, Character = Character.Amor });
+                await gameRepo.SetPhase(game, Phase.NightAmor);
+                Assert.Equal(Phase.NightWolves, game.Phase);
+            }
+        }
+
+        [Fact]
+        public async Task Set_Phase_With_Amor_and_Seer_Second_Night_Test()
+        {
+            var options = new DbContextOptionsBuilder<WerewolfContext>()
+                .UseInMemoryDatabase(databaseName: "Set_Phase_With_Amor_and_Seer_Second_Night_database")
+                .UseLazyLoadingProxies()
+                .Options;
+
+            using (var context = new WerewolfContext(options))
+            {
+                var gameRepo = new GameRepository(context, chbs);
+                var playerRepo = new PlayerRepository(context);
+                var game = new Game() { Night = 1 };
+                await gameRepo.Add(game);
+                await playerRepo.Add(new Player() { Game = game, Character = Character.Werewolf });
+                await playerRepo.Add(new Player() { Game = game, Character = Character.Amor });
+                await playerRepo.Add(new Player() { Game = game, Character = Character.Seer });
+                await gameRepo.SetPhase(game, Phase.NightAmor);
+                Assert.Equal(Phase.NightSeer, game.Phase);
+            }
+        }
+
+        [Fact]
+        public async Task Set_Phase_Without_Amor_with_Seer_Test()
+        {
+            var options = new DbContextOptionsBuilder<WerewolfContext>()
+                .UseInMemoryDatabase(databaseName: "Set_Phase_Without_Amor_with_Seer_database")
+                .UseLazyLoadingProxies()
+                .Options;
+
+            using (var context = new WerewolfContext(options))
+            {
+                var gameRepo = new GameRepository(context, chbs);
+                var playerRepo = new PlayerRepository(context);
+                var game = new Game();
+                await gameRepo.Add(game);
+                await playerRepo.Add(new Player() { Game = game, Character = Character.Werewolf });
+                await playerRepo.Add(new Player() { Game = game, Character = Character.Seer });
+                await gameRepo.SetPhase(game, Phase.NightAmor);
+                Assert.Equal(Phase.NightSeer, game.Phase);
             }
         }
     }

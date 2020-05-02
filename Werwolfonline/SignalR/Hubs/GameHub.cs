@@ -38,11 +38,12 @@ namespace werwolfonline.SignalR.Hubs
             }
             else
             {
-                var player = await playerRepository.Add(new Player(name, Context.ConnectionId, game));
-                var publicGame = new PublicGame(game, player);
+                await playerRepository.Add(new Player(name, Context.ConnectionId, game));
                 var allPlayers = await playerRepository.GetPlayersForGame(game.Id);
-                System.Console.WriteLine(string.Join(", ", allPlayers.Select(player => player.ConnectionId)));
-                await Clients.Clients(allPlayers.Select(player => player.ConnectionId).ToList()).SendGameUpdate(publicGame);
+                foreach (var player in allPlayers)
+                {
+                    await Clients.Client(player.ConnectionId).SendGameUpdate(game.GetPublicGame(player));
+                }
             }
         }
 
@@ -77,8 +78,9 @@ namespace werwolfonline.SignalR.Hubs
 
         public async Task StartGame(PublicGame game)
         {
-            var caller =await playerRepository.GetByConnectionId(Context.ConnectionId);
-            if(!caller.IsHost || caller.Id!=game.Id){
+            var caller = await playerRepository.GetByConnectionId(Context.ConnectionId);
+            if (!caller.IsHost || caller.Id != game.Id)
+            {
                 await Clients.Caller.NotAuthorized();
                 return;
             }
@@ -86,8 +88,34 @@ namespace werwolfonline.SignalR.Hubs
             var players = await playerRepository.GetPlayersForGame(caller.GameId);
             await playerRepository.AssignRoles(players, caller.Game.CharacterCounts);
             await gameRepository.SetPhase(caller.Game, Phase.NightAmor);
-            foreach(var player in players){
+            foreach (var player in players)
+            {
                 await Clients.Client(player.ConnectionId).SendGameUpdate(caller.Game.GetPublicGame(player));
+            }
+
+            logger.LogDebug(string.Join("\n", players.Select(p => $"{p.Name}: {p.Character}")));
+            logger.LogDebug($"{caller.Game.Phase}");
+
+            switch (caller.Game.Phase)
+            {
+                case Phase.NightAmor:
+                    var amor = await playerRepository.GetAmor(caller.GameId);
+                    if (amor != null)
+                    {
+                        await Clients.Client(amor.ConnectionId).AskAmor();
+                    }
+                    break;
+                case Phase.NightSeer:
+                    var seer = await playerRepository.GetSeer(caller.GameId);
+                    if (seer != null)
+                    {
+                        await Clients.Client(seer.ConnectionId).AskSeer();
+                    }
+                    break;
+                case Phase.NightWolves:
+                    var wolves = await playerRepository.GetWerewolves(caller.GameId);
+                    await Clients.Clients(wolves.Select(wolf => wolf.ConnectionId).ToList()).AskWerewolf();
+                    break;
             }
         }
 
@@ -125,15 +153,24 @@ namespace werwolfonline.SignalR.Hubs
             await Clients.Caller.SendPlayerUpdate(player.GetPublicPlayer());
         }
 
-        public async Task VoteFor(int playerId, string secret, int votedPlayerId)
+        public async Task VoteFor(int votedPlayerId)
         {
-            var player = await playerRepository.GetById(playerId);
-            if (player == null || player.Secret != secret || !player.IsAlive) { return; }
+            var player = await playerRepository.GetByConnectionId(Context.ConnectionId);
+            if (player == null || !player.IsAlive) { return; }
+            if (player.Game.Phase == Phase.NightWolves && player.Character != Character.Werewolf)
+            {
+                await Clients.Caller.NotAuthorized();
+                return;
+            }
 
             var votedPlayer = await playerRepository.GetById(votedPlayerId);
-            if (votedPlayer == null || !votedPlayer.IsAlive || votedPlayer.GameId != player.GameId) { return; }
-            player.VoteFor = votedPlayer;
-            await EvaluateVote(player.GameId);
+            if (votedPlayer == null || !votedPlayer.IsAlive || votedPlayer.GameId != player.GameId)
+            {
+                await Clients.Caller.NotAuthorized();
+                return;
+            }
+            await playerRepository.VoteFor(player, votedPlayer);
+            await EvaluateVote(player.Game);
         }
 
         public async Task WitchKill(int playerId, string secret, int killedPlayerId)
@@ -223,8 +260,6 @@ namespace werwolfonline.SignalR.Hubs
             }
         }
 
-
-
         public async Task Ready(int playerId, string secret)
         {
             var player = await playerRepository.GetById(playerId);
@@ -252,16 +287,13 @@ namespace werwolfonline.SignalR.Hubs
             player.IsAlive = false;
         }
 
-        private async Task EvaluateVote(int gameId)
+        private async Task EvaluateVote(Game game)
         {
-            var game = await gameRepository.GetById(gameId);
-            if (game == null) { return; }
-
             switch (game.Phase)
             {
                 case Phase.NightWolves:
-                    var wolves = await playerRepository.GetWerewolves(gameId);
-                    var victim = await MarjorityWinner(wolves, gameId);
+                    var wolves = await playerRepository.GetWerewolves(game.Id);
+                    var victim = await MarjorityWinner(wolves);
                     if (victim != null)
                     {
                         await Clients.Clients(wolves.Select(wolf => wolf.ConnectionId).ToList()).GoToSleep();
@@ -271,7 +303,7 @@ namespace werwolfonline.SignalR.Hubs
             }
         }
 
-        private async Task<Player?> MarjorityWinner(IEnumerable<Player> voters, int gameId)
+        private async Task<Player?> MarjorityWinner(IEnumerable<Player> voters)
         {
             var voterCount = voters.Count(voter => voter.VoteForId != null);
             // Find the one who has a plurality
@@ -281,6 +313,7 @@ namespace werwolfonline.SignalR.Hubs
                                     .GroupBy(playerId => playerId)
                                     .OrderByDescending(grouping => grouping.Count())
                                     .First();
+            // but require majority
             if (pluralityWinner.Count() > voterCount / 2)
             {
                 return await playerRepository.GetById(pluralityWinner.Key);

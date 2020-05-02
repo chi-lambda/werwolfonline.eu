@@ -63,6 +63,12 @@ namespace werwolfonline.Database.Repositories
                 .SingleOrDefaultAsync(player => player.GameId == gameId && player.Character == Character.Amor);
         }
 
+        public async Task<Player> GetSeer(int gameId)
+        {
+            return await context.Players
+                .SingleOrDefaultAsync(player => player.GameId == gameId && player.Character == Character.Seer);
+        }
+
         public async Task<Player> GetProtector(int gameId)
         {
             return await context.Players
@@ -109,6 +115,11 @@ namespace werwolfonline.Database.Repositories
             await context.SaveChangesAsync();
         }
 
+        public async Task VoteFor(Player voter, Player victim)
+        {
+            voter.VoteFor = victim;
+            await Save();
+        }
         public async Task SetDiedTonight(Player player, bool state)
         {
             player.DiedTonight = state;
@@ -117,17 +128,20 @@ namespace werwolfonline.Database.Repositories
 
         public async Task AssignRoles(IEnumerable<Player> players, IEnumerable<CharacterCount> characterCounts)
         {
-            var characterList = characterCounts
-                .SelectMany(cc => Enumerable.Repeat(cc.Character, cc.Count))
-                .ToList();
-            var rnd = new Random();
-            foreach (var player in players)
+            while (!players.Any(player => player.Character == Character.Werewolf || player.Character == Character.GreatWolf))
             {
-                var pos = rnd.Next(characterList.Count);
-                player.Character = characterList[pos];
-                characterList.RemoveAt(pos);
+                var characterList = characterCounts
+                    .SelectMany(cc => Enumerable.Repeat(cc.Character, cc.Count))
+                    .ToList();
+                var rnd = new Random();
+                foreach (var player in players)
+                {
+                    var pos = rnd.Next(characterList.Count);
+                    player.Character = characterList[pos];
+                    characterList.RemoveAt(pos);
+                }
             }
-
+            
             await Save();
         }
 

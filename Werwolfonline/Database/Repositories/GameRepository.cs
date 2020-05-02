@@ -46,13 +46,21 @@ namespace werwolfonline.Database.Repositories
 
         public async Task SetPhase(Game game, Phase phase)
         {
-            if (game.Phase == Phase.NightAmor)
+            if (phase == Phase.NightAmor)
             {
                 game.Night++;
-                if (game.Night > 1)
+                if (game.Night > 1 || !game.Players.Any(player => player.Character == Character.Amor))
                 {
                     phase = Phase.NightSeer;
                 }
+            }
+            if (phase == Phase.NightSeer && !game.Players.Any(player => player.Character == Character.Seer))
+            {
+                phase = Phase.NightWolves;
+            }
+            if (phase == Phase.NightWitch && !game.Players.Any(player => player.Character == Character.Witch))
+            {
+                phase = Phase.NightEnd;
             }
             game.Phase = phase;
             await context.SaveChangesAsync();

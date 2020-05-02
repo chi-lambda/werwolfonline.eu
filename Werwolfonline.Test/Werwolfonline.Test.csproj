@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Werwolfonline\werwolfonline.csproj" />
+    <ProjectReference Include="..\Werwolfonline.Interfaces\Werwolfonline.Interfaces.csproj" />
   </ItemGroup>
 
 </Project>

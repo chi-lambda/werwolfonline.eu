@@ -51,27 +51,27 @@
                 <tbody>
                     <tr>
                         <td>Werwölfe</td>
-                        <td><input class="w3-input" type="number" v-model="werewolfCount"></td>
+                        <td><input class="w3-input" type="number" v-model.number="werewolfCount"></td>
                     </tr>
                     <tr>
                         <td>Hexen</td>
-                        <td><input class="w3-input" type="number" v-model="witchCount"></td>
+                        <td><input class="w3-input" type="number" v-model.number="witchCount"></td>
                     </tr>
                     <tr>
                         <td>Seherinnen</td>
-                        <td><input class="w3-input" type="number" v-model="seerCount"></td>
+                        <td><input class="w3-input" type="number" v-model.number="seerCount"></td>
                     </tr>
                     <tr>
                         <td>Jäger</td>
-                        <td><input class="w3-input" type="number" v-model="hunterCount"></td>
+                        <td><input class="w3-input" type="number" v-model.number="hunterCount"></td>
                     </tr>
                     <tr>
                         <td>Amor (maximal 1)</td>
-                        <td><input class="w3-input" type="number" v-model="amorCount"></td>
+                        <td><input class="w3-input" type="number" v-model.number="amorCount"></td>
                     </tr>
                     <tr>
                         <td>Dorfbewohner</td>
-                        <td><input class="w3-input" type="number" v-model="villagerCount" v-bind:readonly="!game.player.isHost"></td>
+                        <td><input class="w3-input" type="number" v-model.number="villagerCount" v-bind:readonly="!game.player.isHost"></td>
                     </tr>
                     <tr class="w3-topbar">
                         <td>Karten insgesamt</td>
@@ -83,12 +83,20 @@
             <div><input type="checkbox" v-model="game.revealIdentity" id="reveal-identity" class="w3-check"><label for="reveal-identity">Identität nach Tod aufdecken.</label></div>
             <div class="w3-panel w3-pale-red w3-leftbar w3-border-red" v-if="notEnoughCards">Es sind nicht genug Karten für die angemeldeten Spieler eingemischt.</div>
             <div class="w3-panel w3-pale-red w3-leftbar w3-border-red" v-if="fewCards">Es wird empfohlen, mindestens zwei Karten mehr als Spieler einzumischen.</div>
-            <button v-bind:class="{'w3-green': !notEnoughCards && !fewCards, 'w3-yellow':fewCards, 'w3-red':notEnoughCards, 'w3-button':true, 'w3-block':true}" v-on:click="startGame()" v-bind:disabled="notEnoughCards" v-if="game.player.isHost">Spiel starten</button>
+            <button v-bind:class="{'w3-green': !notEnoughCards && !fewCards, 'w3-yellow':fewCards, 'w3-red':notEnoughCards}" class="w3-button w3-block" v-on:click="startGame()" v-bind:disabled="notEnoughCards" v-if="game.player.isHost">Spiel starten</button>
         </div>
     </div>
-    <div v-if="page == 'night'" class="w3-black">
-        <div class="w3-panel w3-card-4 w3-container">
+    <div v-if="page == 'night'">
+        <div class="w3-panel w3-card-4 w3-container w3-center">
             Es ist Nacht.
+        </div>
+    </div>
+    <div v-if="page == 'werewolf'">
+        <div class="w3-panel w3-card-4 w3-container">
+            <div>Wer soll das Opfer sein?</div>
+            <div v-for="victim in game.players">
+                <button v-if="victim.id != game.player.id" class="w3-button" v-bind:class="{'w3-grey': game.player.voteForId != victim.id, 'w3-white': game.player.voteForId == victim.id}" v-on:click="voteFor(victim.id)">{{ victim.name }}</button>
+            </div>
         </div>
     </div>
 </div>

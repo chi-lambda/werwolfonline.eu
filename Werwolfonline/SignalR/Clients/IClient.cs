@@ -12,6 +12,7 @@ namespace werwolfonline.SignalR.Clients
         Task NotFound();
         Task NotAuthorized();
         Task InformLover(int loverId);
+        Task AskAmor();
         Task AskHunter();
         Task AskProtector();
         Task AskSlut();
