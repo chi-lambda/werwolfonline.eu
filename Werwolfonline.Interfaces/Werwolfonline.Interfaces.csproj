@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <ItemGroup>
+    <ProjectReference Include="..\Werwolfonline.Database.Model\Werwolfonline.Database.Model.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <NullableContextOptions>enable</NullableContextOptions>
+    <WarningsAsErrors>CS8600;CS8602;CS8603</WarningsAsErrors>
+    <LangVersion>8.0</LangVersion>
+</PropertyGroup>
+
+</Project>

@@ -1,18 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using werwolfonline.Database;
 using werwolfonline.Database.Repositories;
-using werwolfonline.Database.Utils;
+using werwolfonline.Interfaces.Database.Repositories;
 using werwolfonline.SignalR.Hubs;
+using werwolfonline.Utils;
 
 namespace werwolfonline
 {
@@ -38,8 +34,8 @@ namespace werwolfonline
 
             services.AddSingleton<CorrectHorseBatteryStaple>();
             services.AddSingleton<WerewolfContext>();
-            services.AddSingleton<GameRepository>();
-            services.AddSingleton<PlayerRepository>();
+            services.AddSingleton<IGameRepository, GameRepository>();
+            services.AddSingleton<IPlayerRepository,PlayerRepository>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using werwolfonline.Database.Model;
-using werwolfonline.Models.Enums;
+using werwolfonline.Database.Model.Enums;
 
 namespace werwolfonline.Database
 {

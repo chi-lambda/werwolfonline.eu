@@ -1,7 +1,7 @@
+using werwolfonline.Utils;
 using Xunit;
-using Xunit.Extensions;
 
-namespace werwolfonline.Database.Utils.Test 
+namespace werwolfonline.Database.Utils.Test
 {
     public class CorrectHorseBatteryStaple_Test
     {

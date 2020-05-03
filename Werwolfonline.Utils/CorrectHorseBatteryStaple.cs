@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
-namespace werwolfonline.Database.Utils
+namespace werwolfonline.Utils
 {
     public class CorrectHorseBatteryStaple
     {
@@ -30,7 +29,7 @@ namespace werwolfonline.Database.Utils
         public ulong FromGermanWords(string s)
         {
             var mod = (ulong)germanWords.Length;
-            var words = s.Split('-', StringSplitOptions.RemoveEmptyEntries);
+            var words = s.Split(new[] { '-' }, StringSplitOptions.RemoveEmptyEntries);
             ulong result = 0;
             foreach (var word in words.Reverse())
             {

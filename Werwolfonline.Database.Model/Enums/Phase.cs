@@ -1,4 +1,4 @@
-namespace werwolfonline.Models.Enums
+namespace werwolfonline.Database.Model.Enums
 {
     public enum Phase
     {

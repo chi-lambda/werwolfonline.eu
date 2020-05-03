@@ -4,11 +4,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using werwolfonline.Database.Model;
-using werwolfonline.Models.Enums;
+using werwolfonline.Database.Model.Enums;
+using werwolfonline.Interfaces.Database.Repositories;
 
 namespace werwolfonline.Database.Repositories
 {
-    public class PlayerRepository
+    public class PlayerRepository : IPlayerRepository
     {
         private readonly WerewolfContext context;
 
@@ -141,7 +142,7 @@ namespace werwolfonline.Database.Repositories
                     characterList.RemoveAt(pos);
                 }
             }
-            
+
             await Save();
         }
 

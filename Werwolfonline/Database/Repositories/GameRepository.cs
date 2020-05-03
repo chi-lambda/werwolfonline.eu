@@ -3,12 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using werwolfonline.Database.Model;
-using werwolfonline.Database.Utils;
-using werwolfonline.Models.Enums;
+using werwolfonline.Database.Model.Enums;
+using werwolfonline.Interfaces.Database.Repositories;
+using werwolfonline.Utils;
 
 namespace werwolfonline.Database.Repositories
 {
-    public class GameRepository
+    public class GameRepository : IGameRepository
     {
         private readonly WerewolfContext context;
         private readonly CorrectHorseBatteryStaple chbs;

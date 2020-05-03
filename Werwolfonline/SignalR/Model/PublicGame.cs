@@ -1,7 +1,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using werwolfonline.Database.Model;
-using werwolfonline.Models.Enums;
 
 namespace werwolfonline.SignalR.Model
 {

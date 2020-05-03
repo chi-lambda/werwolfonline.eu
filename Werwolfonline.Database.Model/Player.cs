@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Security.Cryptography;
 using System.Text.Json.Serialization;
-using werwolfonline.Models.Enums;
-using werwolfonline.SignalR.Model;
+using werwolfonline.Database.Model.Enums;
 
 namespace werwolfonline.Database.Model
 {
@@ -66,10 +64,6 @@ namespace werwolfonline.Database.Model
         public void MorningReset()
         {
             VoteFor = null;
-        }
-
-        public PublicPlayer GetPublicPlayer(){
-            return new PublicPlayer(this);
         }
 
         public bool IsWerewolf => Character == Character.Werewolf || Character == Character.GreatWolf;

@@ -1,9 +1,8 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using werwolfonline.Database.Utils;
-using werwolfonline.Models.Enums;
-using werwolfonline.SignalR.Model;
+using werwolfonline.Database.Model.Enums;
+using werwolfonline.Utils;
 
 namespace werwolfonline.Database.Model
 {
@@ -47,12 +46,8 @@ namespace werwolfonline.Database.Model
         public string Log { get; set; } = "";
         public DateTime LastAccess { get; set; }
         public virtual List<Player> Players { get; set; } = new List<Player>();
-
-        public PublicGame GetPublicGame(Player player)
+        public Game AddCharacterCounts()
         {
-            return new PublicGame(this, player);
-        }
-        public Game AddCharacterCounts(){
             CharacterCounts.Add(new CharacterCount { Character = Character.Werewolf, Count = 1 });
             CharacterCounts.Add(new CharacterCount { Character = Character.Hunter, Count = 1 });
             CharacterCounts.Add(new CharacterCount { Character = Character.Seer, Count = 1 });

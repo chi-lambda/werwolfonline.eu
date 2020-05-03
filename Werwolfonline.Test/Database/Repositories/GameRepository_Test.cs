@@ -1,9 +1,8 @@
-using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using werwolfonline.Database.Model;
-using werwolfonline.Database.Utils;
-using werwolfonline.Models.Enums;
+using werwolfonline.Database.Model.Enums;
+using werwolfonline.Utils;
 using Xunit;
 
 namespace werwolfonline.Database.Repositories.Test

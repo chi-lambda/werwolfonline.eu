@@ -4,8 +4,9 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging;
 using werwolfonline.Database.Model;
+using werwolfonline.Database.Model.Enums;
 using werwolfonline.Database.Repositories;
-using werwolfonline.Models.Enums;
+using werwolfonline.Interfaces.Database.Repositories;
 using werwolfonline.SignalR.Clients;
 using werwolfonline.SignalR.Model;
 
@@ -14,11 +15,11 @@ namespace werwolfonline.SignalR.Hubs
     public class GameHub : Hub<IClient>
     {
 
-        private GameRepository gameRepository;
-        private PlayerRepository playerRepository;
+        private IGameRepository gameRepository;
+        private IPlayerRepository playerRepository;
         private readonly ILogger<GameHub> logger;
 
-        public GameHub(GameRepository gameRepository, PlayerRepository playerRepository, ILogger<GameHub> logger) : base()
+        public GameHub(IGameRepository gameRepository, IPlayerRepository playerRepository, ILogger<GameHub> logger) : base()
         {
             this.gameRepository = gameRepository;
             this.playerRepository = playerRepository;
@@ -42,7 +43,7 @@ namespace werwolfonline.SignalR.Hubs
                 var allPlayers = await playerRepository.GetPlayersForGame(game.Id);
                 foreach (var player in allPlayers)
                 {
-                    await Clients.Client(player.ConnectionId).SendGameUpdate(game.GetPublicGame(player));
+                    await Clients.Client(player.ConnectionId).SendGameUpdate(new PublicGame(game, player));
                 }
             }
         }
@@ -51,7 +52,7 @@ namespace werwolfonline.SignalR.Hubs
         {
             var game = await gameRepository.Add(new Game() { Phase = Phase.WaitForPlayers }.AddCharacterCounts());
             var player = await playerRepository.Add(new Player(name, Context.ConnectionId, game) { IsHost = true });
-            var publicGame = game.GetPublicGame(player);
+            var publicGame = new PublicGame(game, player);
             await Clients.Caller.SendGameUpdate(publicGame);
         }
 
@@ -72,7 +73,7 @@ namespace werwolfonline.SignalR.Hubs
             var players = await playerRepository.GetPlayersForGame(callingPlayer.GameId);
             foreach (var player in players)
             {
-                await Clients.Client(player.ConnectionId).SendGameUpdate(callingPlayer.Game.GetPublicGame(player));
+                await Clients.Client(player.ConnectionId).SendGameUpdate(new PublicGame(callingPlayer.Game, player));
             }
         }
 
@@ -90,7 +91,7 @@ namespace werwolfonline.SignalR.Hubs
             await gameRepository.SetPhase(caller.Game, Phase.NightAmor);
             foreach (var player in players)
             {
-                await Clients.Client(player.ConnectionId).SendGameUpdate(caller.Game.GetPublicGame(player));
+                await Clients.Client(player.ConnectionId).SendGameUpdate(new PublicGame(caller.Game, player));
             }
 
             logger.LogDebug(string.Join("\n", players.Select(p => $"{p.Name}: {p.Character}")));
@@ -127,7 +128,7 @@ namespace werwolfonline.SignalR.Hubs
                 if (player.Secret == secret)
                 {
                     player.ConnectionId = Context.ConnectionId;
-                    await Clients.Caller.SendPlayerUpdate(player.GetPublicPlayer());
+                    await Clients.Caller.SendPlayerUpdate(new PublicPlayer(player));
                 }
                 else
                 {
@@ -150,7 +151,7 @@ namespace werwolfonline.SignalR.Hubs
             }
             var player = new Player(name, Context.ConnectionId, game);
             await playerRepository.Add(player);
-            await Clients.Caller.SendPlayerUpdate(player.GetPublicPlayer());
+            await Clients.Caller.SendPlayerUpdate(new PublicPlayer(player));
         }
 
         public async Task VoteFor(int votedPlayerId)
