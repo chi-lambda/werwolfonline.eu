@@ -2,118 +2,133 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using werwolfonline.Database.Model;
 using werwolfonline.Database.Model.Enums;
 using werwolfonline.Interfaces.Database.Repositories;
+using werwolfonline.Utils;
 
-namespace werwolfonline.Database.Repositories
+namespace werwolfonline.Tests.Mocks.Database.Repositories
 {
-    public class PlayerRepository : IPlayerRepository
+    class MockPlayerRepository : IPlayerRepository
     {
-        private readonly WerewolfContext context;
+        public ICollection<Game> Games { get; }
+        private ICollection<Player> Players { get; }
+        private int currentId = 1;
 
-        public PlayerRepository(WerewolfContext context)
+        private CorrectHorseBatteryStaple chbs = new CorrectHorseBatteryStaple();
+        private IRNGesus rnGesus;
+
+        public MockPlayerRepository(ICollection<Game> games, ICollection<Player> players, IRNGesus rnGesus)
         {
-            this.context = context;
+            Games = games;
+            Players = players;
+            this.rnGesus = rnGesus;
+        }
+
+        public async Task<Player> Add(Player player)
+        {
+            player.Id = currentId;
+            currentId++;
+            Players.Add(player);
+            return await Task.FromResult(player);
         }
 
         public async Task<Player> GetById(int id)
         {
-            return await context.Players.FindAsync(id);
+            return await Task.FromResult(Players.SingleOrDefault(player => player.Id == id));
         }
 
         public async Task<List<Player>> GetPlayersForGame(int gameId)
         {
-            return await context.Players.Where(player => player.GameId == gameId).ToListAsync();
+            return await Task.FromResult(Players.Where(player => player.GameId == gameId).ToList());
         }
 
         public async Task<Player> GetWerewolfVictim(Game game)
         {
-            return await context.Players.FindAsync(game.WerewolfVictimId);
+            return await Task.FromResult(Players.SingleOrDefault(player => player.Id == game.WerewolfVictimId));
         }
 
         public async Task<IEnumerable<Player>> GetWerewolves(int gameId)
         {
-            return await context.Players
+            return await Task.FromResult(Players
                 .Where(player => player.GameId == gameId && player.Character == Character.Werewolf || player.Character == Character.GreatWolf)
-                .ToListAsync();
+                .ToList());
         }
 
         public async Task<Player> GetWitch(int gameId)
         {
-            return await context.Players
-                .SingleOrDefaultAsync(player => player.GameId == gameId && player.Character == Character.Witch);
+            return await Task.FromResult(Players
+                .SingleOrDefault(player => player.GameId == gameId && player.Character == Character.Witch));
         }
 
         public async Task<Player> GetSlut(int gameId)
         {
-            return await context.Players
-                .SingleOrDefaultAsync(player => player.GameId == gameId && player.Character == Character.Slut);
+            return await Task.FromResult(Players
+                .SingleOrDefault(player => player.GameId == gameId && player.Character == Character.Slut));
         }
 
         public async Task<Player> GetVillagers(int gameId)
         {
-            return await context.Players
-                .SingleOrDefaultAsync(player => player.GameId == gameId && player.Character == Character.Villager);
+            return await Task.FromResult(Players
+                .SingleOrDefault(player => player.GameId == gameId && player.Character == Character.Villager));
         }
 
         public async Task<Player> GetAmor(int gameId)
         {
-            return await context.Players
-                .SingleOrDefaultAsync(player => player.GameId == gameId && player.Character == Character.Amor);
+            return await Task.FromResult(Players
+                .SingleOrDefault(player => player.GameId == gameId && player.Character == Character.Amor));
         }
 
         public async Task<Player> GetSeer(int gameId)
         {
-            return await context.Players
-                .SingleOrDefaultAsync(player => player.GameId == gameId && player.Character == Character.Seer);
+            return await Task.FromResult(Players
+                .SingleOrDefault(player => player.GameId == gameId && player.Character == Character.Seer));
         }
 
         public async Task<Player> GetProtector(int gameId)
         {
-            return await context.Players
-                .SingleOrDefaultAsync(player => player.GameId == gameId && player.Character == Character.Protector);
+            return await Task.FromResult(Players
+                .SingleOrDefault(player => player.GameId == gameId && player.Character == Character.Protector));
         }
 
         public async Task<bool> IsPlayerProtected(int playerId)
         {
-            return await context.Players.AnyAsync(player => player.Character == Character.Protector && player.AssociateId == playerId);
+            return await Task.FromResult(Players.Any(player => player.Character == Character.Protector && player.AssociateId == playerId));
         }
 
         public async Task<int> GetWerewolfCount()
         {
-            return await context.Players.CountAsync(player => player.Character == Character.GreatWolf || player.Character == Character.Werewolf);
+            return await Task.FromResult(Players.Count(player => player.Character == Character.GreatWolf || player.Character == Character.Werewolf));
         }
 
         public async Task<Player> GetByConnectionId(string connectionId)
         {
-            return await context.Players.Where(player => player.ConnectionId == connectionId).Include(player => player.Game).SingleOrDefaultAsync();
+            return await Task.FromResult(Players.Where(player => player.ConnectionId == connectionId).SingleOrDefault());
         }
 
         public async Task<IEnumerable<Player>> GetAll()
         {
-            return await context.Players.ToListAsync();
+            return await Task.FromResult(Players.ToList());
         }
 
         public async Task<int> Count()
         {
-            return await context.Players.CountAsync();
+            return await Task.FromResult(Players.Count);
         }
 
         public async Task<int> CountForGame(int gameId)
         {
-            return await context.Players.CountAsync(player => player.GameId == gameId && player.IsAlive);
+            return await Task.FromResult(Players.Count(player => player.GameId == gameId && player.IsAlive));
         }
         public async Task<int> CountWolvesForGame(int gameId)
         {
-            return await context.Players.CountAsync(player => player.GameId == gameId && player.IsAlive && (player.Character == Character.Werewolf || player.Character == Character.GreatWolf));
+            return await Task.FromResult(Players.Count(player => player.GameId == gameId && player.IsAlive && (player.Character == Character.Werewolf || player.Character == Character.GreatWolf)));
         }
 
         public async Task SetAssociate(Player player, Player associate)
         {
             player.Associate = associate;
-            await Save();
+            await Task.CompletedTask;
         }
 
         public async Task VoteFor(Player voter, Player victim)
@@ -146,13 +161,6 @@ namespace werwolfonline.Database.Repositories
             await Save();
         }
 
-        public async Task<Player> Add(Player player)
-        {
-            context.Add(player);
-            await Save();
-            return player;
-        }
-
         public async Task ResetPlayer(Player player)
         {
             player.MorningReset();
@@ -161,8 +169,8 @@ namespace werwolfonline.Database.Repositories
 
         public async Task Save()
         {
-            await context.SaveChangesAsync();
+            //NOP
+            await Task.CompletedTask;
         }
-
     }
 }

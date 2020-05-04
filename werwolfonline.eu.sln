@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Werwolfonline.Database.Mode
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Werwolfonline.Utils", "Werwolfonline.Utils\Werwolfonline.Utils.csproj", "{F0ED27DC-2B83-4AD5-B19C-56BA03C43E22}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Werwolfonline.Tests.Mocks", "Werwolfonline.Tests.Mocks\Werwolfonline.Tests.Mocks.csproj", "{D9805AE8-C2E3-4802-83CE-00674C993B5A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -86,5 +88,17 @@ Global
 		{F0ED27DC-2B83-4AD5-B19C-56BA03C43E22}.Release|x64.Build.0 = Release|Any CPU
 		{F0ED27DC-2B83-4AD5-B19C-56BA03C43E22}.Release|x86.ActiveCfg = Release|Any CPU
 		{F0ED27DC-2B83-4AD5-B19C-56BA03C43E22}.Release|x86.Build.0 = Release|Any CPU
+		{D9805AE8-C2E3-4802-83CE-00674C993B5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D9805AE8-C2E3-4802-83CE-00674C993B5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D9805AE8-C2E3-4802-83CE-00674C993B5A}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D9805AE8-C2E3-4802-83CE-00674C993B5A}.Debug|x64.Build.0 = Debug|Any CPU
+		{D9805AE8-C2E3-4802-83CE-00674C993B5A}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{D9805AE8-C2E3-4802-83CE-00674C993B5A}.Debug|x86.Build.0 = Debug|Any CPU
+		{D9805AE8-C2E3-4802-83CE-00674C993B5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D9805AE8-C2E3-4802-83CE-00674C993B5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D9805AE8-C2E3-4802-83CE-00674C993B5A}.Release|x64.ActiveCfg = Release|Any CPU
+		{D9805AE8-C2E3-4802-83CE-00674C993B5A}.Release|x64.Build.0 = Release|Any CPU
+		{D9805AE8-C2E3-4802-83CE-00674C993B5A}.Release|x86.ActiveCfg = Release|Any CPU
+		{D9805AE8-C2E3-4802-83CE-00674C993B5A}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

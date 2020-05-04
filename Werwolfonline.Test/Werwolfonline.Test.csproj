@@ -19,6 +19,7 @@
     <ProjectReference Include="..\Werwolfonline.Interfaces\Werwolfonline.Interfaces.csproj" />
     <ProjectReference Include="..\Werwolfonline.Database.Model\Werwolfonline.Database.Model.csproj" />
     <ProjectReference Include="..\Werwolfonline.Utils\Werwolfonline.Utils.csproj" />
+    <ProjectReference Include="..\Werwolfonline.Tests.Mocks\Werwolfonline.Tests.Mocks.csproj" />
   </ItemGroup>
 
 </Project>
