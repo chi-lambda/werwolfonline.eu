@@ -7,7 +7,6 @@ namespace werwolfonline.SignalR.Clients
     {
         Task SendPlayerUpdate(PublicPlayer player);
         Task SendGameUpdate(PublicGame game);
-        Task SetConnectionId(string connectionId);
         Task RevealIdentity(string identity);
         Task NotFound();
         Task NotAuthorized();

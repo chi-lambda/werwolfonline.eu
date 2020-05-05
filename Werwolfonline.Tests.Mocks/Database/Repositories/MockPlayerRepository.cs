@@ -9,7 +9,7 @@ using werwolfonline.Utils;
 
 namespace werwolfonline.Tests.Mocks.Database.Repositories
 {
-    class MockPlayerRepository : IPlayerRepository
+    public class MockPlayerRepository : IPlayerRepository
     {
         public ICollection<Game> Games { get; }
         private ICollection<Player> Players { get; }
@@ -30,6 +30,11 @@ namespace werwolfonline.Tests.Mocks.Database.Repositories
             player.Id = currentId;
             currentId++;
             Players.Add(player);
+            var game = player.Game;
+            if (!game.Players.Any(p => p.Id == player.Id))
+            {
+                game.Players.Add(player);
+            }
             return await Task.FromResult(player);
         }
 

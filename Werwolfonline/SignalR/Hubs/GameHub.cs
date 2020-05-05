@@ -17,9 +17,9 @@ namespace werwolfonline.SignalR.Hubs
 
         private IGameRepository gameRepository;
         private IPlayerRepository playerRepository;
-        private readonly ILogger<GameHub> logger;
+        private readonly ILogger logger;
 
-        public GameHub(IGameRepository gameRepository, IPlayerRepository playerRepository, ILogger<GameHub> logger) : base()
+        public GameHub(IGameRepository gameRepository, IPlayerRepository playerRepository, ILogger logger) : base()
         {
             this.gameRepository = gameRepository;
             this.playerRepository = playerRepository;
