@@ -9,7 +9,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="moq" Version="4.14.0" />
-    <PackageReference Include="signalr" Version="0.6.1" />
+    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1" />
     <PackageReference Include="coverlet.collector" Version="1.2.0" />
@@ -21,6 +21,9 @@
     <ProjectReference Include="..\Werwolfonline.Database.Model\Werwolfonline.Database.Model.csproj" />
     <ProjectReference Include="..\Werwolfonline.Utils\Werwolfonline.Utils.csproj" />
     <ProjectReference Include="..\Werwolfonline.Tests.Mocks\Werwolfonline.Tests.Mocks.csproj" />
+    <ProjectReference Include="..\Werwolfonline.SignalR\Werwolfonline.SignalR.csproj" />
+    <ProjectReference Include="..\Werwolfonline.Database\Werwolfonline.Database.csproj" />
+    <ProjectReference Include="..\Werwolfonline.Database.Repositories\Werwolfonline.Database.Repositories.csproj" />
   </ItemGroup>
 
 </Project>

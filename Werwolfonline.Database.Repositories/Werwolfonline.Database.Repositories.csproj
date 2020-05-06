@@ -1,0 +1,21 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <NullableContextOptions>enable</NullableContextOptions>
+    <WarningsAsErrors>CS8600;CS8602;CS8603</WarningsAsErrors>
+    <LangVersion>8.0</LangVersion>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="3.1.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Proxies" Version="3.1.3" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="3.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Werwolfonline.Interfaces\Werwolfonline.Interfaces.csproj" />
+    <ProjectReference Include="..\Werwolfonline.Utils\Werwolfonline.Utils.csproj" />
+    <ProjectReference Include="..\Werwolfonline.Database.Model\Werwolfonline.Database.Model.csproj" />
+    <ProjectReference Include="..\Werwolfonline.Database\Werwolfonline.Database.csproj" />
+  </ItemGroup>
+</Project>

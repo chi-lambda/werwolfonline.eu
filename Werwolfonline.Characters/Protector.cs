@@ -1,4 +1,4 @@
-namespace werwolfonline.Models.Characters
+namespace werwolfonline.Characters
 {
     public class Protector : Character
     {

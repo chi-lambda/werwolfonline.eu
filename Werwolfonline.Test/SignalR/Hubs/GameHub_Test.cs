@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.Extensions.Logging.Abstractions;
 using Moq;
 using werwolfonline.Database.Model;
+using werwolfonline.Database.Model.Enums;
 using werwolfonline.SignalR.Clients;
 using werwolfonline.SignalR.Hubs;
 using werwolfonline.SignalR.Model;
@@ -29,18 +30,31 @@ namespace werwolfonline.Test.SignalR.Hubs
             var gameHub = new GameHub(gameRepo, playerRepo, logger);
             gameHub.Context = CreateMockHubCallerContext();
             gameHub.Clients = CreateMockHubCallerClients();
-            Mock.Get(gameHub.Context).Setup(ctx => ctx.ConnectionId).Returns("1");
+            SetConnectionId(gameHub, "1");
 
             await gameHub.CreateGame("P1");
             Assert.Single(games);
             Assert.Single(games.First().Players);
             Assert.Equal("1", players.First().ConnectionId);
+            Assert.True(players.First().IsHost);
 
-            Mock.Get(gameHub.Context).Setup(ctx => ctx.ConnectionId).Returns("2");
+            SetConnectionId(gameHub, "2");
             await gameHub.JoinGame(games.First().GameNumberWords, "P2");
             Assert.Single(games);
             Assert.Equal(2, games.First().Players.Count);
             Assert.Contains(players, player => player.ConnectionId == "2");
+            Assert.False(players.First(player => player.ConnectionId == "2").IsHost);
+
+            SetConnectionId(gameHub, "3");
+            await gameHub.JoinGame(games.First().GameNumberWords, "P3");
+            Assert.Single(games);
+            Assert.Equal(3, games.First().Players.Count);
+            Assert.Contains(players, player => player.ConnectionId == "3");
+            Assert.False(players.First(player => player.ConnectionId == "3").IsHost);
+
+            SetConnectionId(gameHub, "1");
+            await gameHub.StartSetup();
+            Assert.Equal(Phase.Setup, games.First().Phase);
         }
         private static IClient CreateClient()
         {
@@ -75,6 +89,11 @@ namespace werwolfonline.Test.SignalR.Hubs
             var mock = Mock.Get(clients);
             mock.Setup(clients => clients.Caller).Returns(CreateClient());
             return clients;
+        }
+
+        private void SetConnectionId(GameHub hub, string connectionId)
+        {
+            Mock.Get(hub.Context).Setup(ctx => ctx.ConnectionId).Returns(connectionId);
         }
     }
 }

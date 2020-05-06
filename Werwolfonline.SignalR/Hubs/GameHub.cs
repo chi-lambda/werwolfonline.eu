@@ -202,7 +202,7 @@ namespace werwolfonline.SignalR.Hubs
             var identifiedPlayer = await playerRepository.GetById(identifiedPlayerId);
             if (identifiedPlayer == null || !identifiedPlayer.IsAlive || identifiedPlayer.GameId != player.GameId) { return; }
 
-            var character = Models.Characters.Character.GetCharacterById(identifiedPlayer.Character);
+            var character = Characters.Character.GetCharacterById(identifiedPlayer.Character);
 
             if (player.Game.SeerSeesIdentity)
             {

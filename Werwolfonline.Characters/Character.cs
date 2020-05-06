@@ -1,6 +1,6 @@
 using System;
 
-namespace werwolfonline.Models.Characters
+namespace werwolfonline.Characters
 {
     public abstract class Character
     {
