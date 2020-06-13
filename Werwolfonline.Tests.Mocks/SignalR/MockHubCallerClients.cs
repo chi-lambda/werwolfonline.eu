@@ -1,16 +1,24 @@
 using System.Collections.Generic;
 using Microsoft.AspNetCore.SignalR;
 using werwolfonline.SignalR.Clients;
+using Moq;
 
 namespace werwolfonline.Tests.Mocks.SignalR
 {
     class MockHubCallerClients : IHubCallerClients<IClient>
     {
-        public IClient Caller => throw new System.NotImplementedException();
 
-        public IClient Others => throw new System.NotImplementedException();
+        private readonly List<IClient> clients = new List<IClient>();
+        private readonly HubCallerContext context;
+        public MockHubCallerClients(HubCallerContext context)
+        {
+            this.context = context;
+        }
+        public IClient Caller => new Mock<IClient>().Object;
 
-        public IClient All => throw new System.NotImplementedException();
+        public IClient Others => new Mock<IClient>().Object;
+
+        public IClient All => new Mock<IClient>().Object;
 
         public IClient AllExcept(IReadOnlyList<string> excludedConnectionIds)
         {

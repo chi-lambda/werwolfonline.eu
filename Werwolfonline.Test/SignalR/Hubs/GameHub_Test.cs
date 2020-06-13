@@ -88,6 +88,7 @@ namespace werwolfonline.Test.SignalR.Hubs
             var clients = Mock.Of<IHubCallerClients<IClient>>();
             var mock = Mock.Get(clients);
             mock.Setup(clients => clients.Caller).Returns(CreateClient());
+            mock.Setup(clients => clients.Client(It.IsAny<string>())).Returns(CreateClient());
             return clients;
         }
 
