@@ -26,7 +26,7 @@ namespace werwolfonline.Test.SignalR.Hubs
             var gameRepo = new MockGameRepository(games, players);
             var rng = new RNGesus();
             var playerRepo = new MockPlayerRepository(games, players, rng);
-            var logger = NullLogger.Instance;
+            var logger = NullLogger<GameHub>.Instance;
             var gameHub = new GameHub(gameRepo, playerRepo, logger);
             gameHub.Context = CreateMockHubCallerContext();
             gameHub.Clients = CreateMockHubCallerClients();
